@@ -273,9 +273,9 @@ for m in manifest:
           or any(f["post"] == m["post_url"] for s in gallery_json["shoots"]
                  for f in s["files"]))
 
-# ---------- 14. shoot cards + drawers ----------
+# ---------- 14. shoot cards open the lightbox directly ----------
 for cat in ["fashion", "editorial", "portrait"]:
-    check(f"drawer present: drawer-{cat}", f'id="drawer-{cat}"' in photos)
+    check(f"no drawer markup: drawer-{cat}", f'id="drawer-{cat}"' not in photos)
 cards = re.findall(r'<button[^>]+class="shoot-card"[^>]*data-shoot="([^"]+)"',
                    photos)
 check("shoot card count matches manifest", len(cards) == len(manifest),
@@ -283,17 +283,21 @@ check("shoot card count matches manifest", len(cards) == len(manifest),
 check("every card maps to a manifest slug",
       set(cards) == {m["slug"] for m in manifest},
       str(set(cards) ^ {m["slug"] for m in manifest})[:150])
-check("cards toggle drawers, not links",
-      all('aria-controls="drawer-' in c for c in
-          re.findall(r'<button[^>]+class="shoot-card"[^>]*>', photos)))
+check("cards carry no drawer wiring",
+      not any('aria-controls="drawer-' in c for c in
+              re.findall(r'<button[^>]+class="shoot-card"[^>]*>', photos)))
+check("lightbox has photo counter", 'id="lbCount"' in photos)
 check("photos.js referenced", 'js/photos.js' in photos)
 check("gallery JSON blob present", 'id="galleryData"' in photos)
+check("photos.js has scoped lightbox (no drawer code)",
+      'function openLb(list, i)' in photos_js and
+      'shoot-drawer' not in photos_js and 'openDrawer' not in photos_js)
 
 # ---------- 15. photos.html: hygiene ----------
 pp = LinkImgParser()
 pp.feed(photos)
-# drawer-ig / lbIg hrefs are populated by photos.js at runtime
-_js_anchors = len(re.findall(r'<a[^>]+class="drawer-ig"[^>]*>', photos)) + 1  # + lbIg
+# lbIg href is populated by photos.js at runtime
+_js_anchors = 1  # lbIg
 check("photos: every <a> has a non-empty href (except JS-filled)",
       len(pp.bad_links) == _js_anchors, str(pp.bad_links))
 # lbImg alt is populated by photos.js at runtime
