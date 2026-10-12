@@ -192,15 +192,18 @@ check("all manifest files exist on disk", not missing, ", ".join(missing[:5]))
 check(">= 150 photos total", len(manifest_files) >= 150,
       f"found {len(manifest_files)}")
 
-# ---------- 11. featured reel: 6 photos, auto-scroll + manual control ----------
+# ---------- 11. reel: best-of-everything marquee, opens shoot albums ----------
 photos_css = (SITE / "css" / "photos.css").read_text(encoding="utf-8")
 photos_js = (SITE / "js" / "photos.js").read_text(encoding="utf-8")
 check("reel markup present",
       'id="reel"' in photos and 'id="reelTrack"' in photos)
 reel_items = re.findall(r'<button[^>]+class="reel-item"[^>]*>', photos)
 visible_items = [b for b in reel_items if 'aria-hidden="true"' not in b]
-check("featured reel shows exactly 6 photos", len(visible_items) == 6,
-      f"found {len(visible_items)}")
+check("reel shows one frame per shoot", len(visible_items) == len(manifest),
+      f"found {len(visible_items)} vs {len(manifest)} shoots")
+check("every shoot appears in the reel",
+      {m["slug"] for m in manifest} ==
+      set(re.findall(r'data-shoot="([^"]+)"', "".join(visible_items))))
 check("reel has manual arrow controls",
       'id="reelPrev"' in photos and 'id="reelNext"' in photos
       and 'class="reel-arrow' in photos)
@@ -210,8 +213,8 @@ check("reel auto-scrolls via JS",
       "requestAnimationFrame" in photos_js and "scrollLeft" in photos_js)
 check("reel pauses on hover",
       "mouseenter" in photos_js and "hoverPause" in photos_js)
-check("reel items open lightbox, not Instagram",
-      all('data-idx=' in b for b in visible_items)
+check("reel items open the shoot album, not Instagram",
+      all('data-shoot=' in b for b in visible_items)
       and not any('instagram.com' in b for b in visible_items))
 check("no Photography section heading on page",
       "<h1" not in photos and "Photography." not in photos)
