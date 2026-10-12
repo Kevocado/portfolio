@@ -132,49 +132,116 @@ for gone in ["San Francisco", "san-francisco", "Fly Kids Community",
              "Beach Days", "On Stage", "Nairobi Editorial"]:
     check(f"photos has no legacy series {gone!r}", gone not in photos)
 
-# ---------- 10. photos.html: manifest parity + IG-link coverage ----------
+# ---------- 10. photos.html: manifest parity (files are {src, post}) ----------
 manifest = json.loads((SITE / "assets" / "photos" / "manifest.json")
                       .read_text(encoding="utf-8"))
-check("manifest has 33 shoots", len(manifest) == 33,
+check("manifest has 29 shoots", len(manifest) == 29,
       f"found {len(manifest)}")
 cats = {m["category"] for m in manifest}
 check("manifest categories are exactly Fashion/Editorial/Portrait",
       cats == {"Fashion", "Editorial", "Portrait"}, str(cats))
 check("manifest has 3 featured shoots",
       sum(1 for m in manifest if m.get("featured")) == 3)
+check("no single-photo shoots",
+      all(len(m["files"]) >= 2 for m in manifest),
+      str([m["slug"] for m in manifest if len(m["files"]) < 2]))
+check("manifest files are {src, post} objects",
+      all(isinstance(f, dict) and "src" in f and "post" in f
+          for m in manifest for f in m["files"]))
 
 photo_srcs = re.findall(r'<img[^>]+src="([^"]+)"', photos)
-manifest_files = [f for m in manifest for f in m["files"]]
-check("every manifest file appears as an <img> src",
-      set(manifest_files) <= set(photo_srcs),
-      str(set(manifest_files) - set(photo_srcs))[:200])
+manifest_files = [f["src"] for m in manifest for f in m["files"]]
+check("every manifest file appears as an <img> src or in gallery JSON",
+      set(manifest_files) <= set(photo_srcs) | set(
+          re.findall(r'"src": "([^"]+)"', photos)),
+      str((set(manifest_files) - set(photo_srcs)) -
+          set(re.findall(r'"src": "([^"]+)"', photos)))[:200])
 check("every <img> src is in the manifest",
       set(photo_srcs) <= set(manifest_files),
       str(set(photo_srcs) - set(manifest_files))[:200])
 missing = [s for s in manifest_files if not (SITE / s).is_file()]
 check("all manifest files exist on disk", not missing, ", ".join(missing[:5]))
-check("147 photos total", len(manifest_files) == 147,
+check("150 photos total", len(manifest_files) == 150,
       f"found {len(manifest_files)}")
 
-ig_links = re.findall(r'href="(https://www\.instagram\.com/p/[^"]+)"', photos)
-check("every shoot links to its IG post",
-      len(ig_links) >= 2 * len(manifest),  # title link + frame links per shoot
-      f"found {len(ig_links)} IG links for {len(manifest)} shoots")
-for m in manifest:
-    check(f"IG link present for {m['slug']}", m["post_url"] in photos)
-    check(f"IG links open in new tab for {m['slug']}",
-          f'href="{m["post_url"]}" target="_blank" rel="noopener"' in photos)
+# ---------- 11. featured marquee: 6 photos, auto-scroll ----------
+check("marquee markup present",
+      'id="marquee"' in photos and 'id="marqueeTrack"' in photos
+      and 'marquee-scroll' in (SITE / "css" / "photos.css").read_text())
+marquee_items = re.findall(r'<button[^>]+class="marquee-item"[^>]*>', photos)
+visible_items = [b for b in marquee_items if 'aria-hidden="true"' not in b]
+check("featured marquee shows exactly 6 photos", len(visible_items) == 6,
+      f"found {len(visible_items)}")
+check("marquee pauses on hover",
+      ".marquee:hover .marquee-track" in (SITE / "css" / "photos.css").read_text())
+check("marquee items open lightbox, not Instagram",
+      all('data-idx=' in b for b in visible_items)
+      and not any('instagram.com' in b for b in visible_items))
 
-# ---------- 11. photos.html: hygiene ----------
+# ---------- 12. lightbox ----------
+for frag in ['id="lightbox"', 'role="dialog"', 'id="lbClose"',
+             'id="lbPrev"', 'id="lbNext"', 'id="lbImg"', 'id="lbIg"']:
+    check(f"lightbox has {frag}", frag in photos)
+check("lightbox has explicit IG link, new tab",
+      'View full post on Instagram' in photos
+      and 'id="lbIg" href="" target="_blank" rel="noopener"' in photos)
+check("lightbox keyboard support in photos.js",
+      all(k in (SITE / "js" / "photos.js").read_text(encoding="utf-8")
+          for k in ["Escape", "ArrowLeft", "ArrowRight"]))
+
+# ---------- 13. IG links are secondary: no photo click goes to Instagram ----------
+ig_anchors = re.findall(r'<a[^>]*href="(https://www\.instagram\.com/p/[^"]+)"[^>]*>',
+                        photos)
+ig_img_wraps = re.findall(
+    r'<a[^>]*href="https://www\.instagram\.com/p/[^"]*"[^>]*>\s*<img', photos)
+check("no photo <img> is wrapped in an Instagram link", not ig_img_wraps,
+      str(ig_img_wraps)[:150])
+check("static HTML has no per-photo IG links (JS renders them)",
+      not ig_anchors, f"found {len(ig_anchors)} static IG anchors")
+gallery_json = json.loads(re.search(
+    r'<script type="application/json" id="galleryData">\s*(\{.*?\})\s*</script>',
+    photos, re.S).group(1))
+for m in manifest:
+    check(f"IG post in gallery JSON for {m['slug']}",
+          any(s["post"] == m["post_url"] for s in gallery_json["shoots"])
+          or any(f["post"] == m["post_url"] for s in gallery_json["shoots"]
+                 for f in s["files"]))
+
+# ---------- 14. shoot cards + drawers ----------
+for cat in ["fashion", "editorial", "portrait"]:
+    check(f"drawer present: drawer-{cat}", f'id="drawer-{cat}"' in photos)
+cards = re.findall(r'<button[^>]+class="shoot-card"[^>]*data-shoot="([^"]+)"',
+                   photos)
+check("shoot card count matches manifest", len(cards) == len(manifest),
+      f"{len(cards)} cards vs {len(manifest)} shoots")
+check("every card maps to a manifest slug",
+      set(cards) == {m["slug"] for m in manifest},
+      str(set(cards) ^ {m["slug"] for m in manifest})[:150])
+check("cards toggle drawers, not links",
+      all('aria-controls="drawer-' in c for c in
+          re.findall(r'<button[^>]+class="shoot-card"[^>]*>', photos)))
+check("photos.js referenced", 'js/photos.js' in photos)
+check("gallery JSON blob present", 'id="galleryData"' in photos)
+
+# ---------- 15. photos.html: hygiene ----------
 pp = LinkImgParser()
 pp.feed(photos)
-check("photos: every <a> has a non-empty href", not pp.bad_links)
-check("photos: every <img> has alt text", not pp.bad_imgs)
+# drawer-ig / lbIg hrefs are populated by photos.js at runtime
+_js_anchors = len(re.findall(r'<a[^>]+class="drawer-ig"[^>]*>', photos)) + 1  # + lbIg
+check("photos: every <a> has a non-empty href (except JS-filled)",
+      len(pp.bad_links) == _js_anchors, str(pp.bad_links))
+# lbImg alt is populated by photos.js at runtime
+lines = photos.splitlines()
+check("photos: every <img> has alt text (except JS-filled lbImg)",
+      all('id="lbImg"' in lines[ln - 1] for ln, _ in pp.bad_imgs),
+      str(pp.bad_imgs))
 check("no emojis in photos", not emoji_re.findall(photos))
 check("no lorem in photos", "lorem" not in photos.lower())
 check("no em-dashes in photos", "\u2014" not in photos)
-check("no em-dashes in photos.css",
-      "\u2014" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8"))
+photos_js = (SITE / "js" / "photos.js").read_text(encoding="utf-8")
+for label, text in [("photos", photos), ("photos.css", (SITE / "css" / "photos.css").read_text(encoding="utf-8")), ("photos.js", photos_js)]:
+    check(f"no em-dashes in {label}", "\u2014" not in text)
+    check(f"no emojis in {label}", not emoji_re.findall(text))
 check("photos.css has no gradients",
       "linear-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8")
       and "radial-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8"))
