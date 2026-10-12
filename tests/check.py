@@ -143,7 +143,7 @@ for gone in ["San Francisco", "san-francisco", "Fly Kids Community",
 # ---------- 10. photos.html: manifest parity (files are {src, post}) ----------
 manifest = json.loads((SITE / "assets" / "photos" / "manifest.json")
                       .read_text(encoding="utf-8"))
-check("manifest has >= 74 shoots", len(manifest) >= 74,
+check("manifest has >= 72 shoots", len(manifest) >= 72,
       f"found {len(manifest)}")
 cats = {m["category"] for m in manifest}
 check("manifest categories are exactly Fashion/Editorial/Portrait",
@@ -165,9 +165,10 @@ post_url_mismatch = [
 ]
 check("shoot post_url matches its files' shared post", not post_url_mismatch,
       str(post_url_mismatch)[:200])
-# no post may lose photos vs the 2026-10-12 one-post-per-shoot baseline
-# (188 photos); splits move photos between shoots, never drop them
-BASELINE_TOTAL_PHOTOS = 188
+# no post may lose photos vs the baseline (186 photos after the
+# 2026-10-12 removal of back-and-better and album-release-party);
+# splits move photos between shoots, never drop them
+BASELINE_TOTAL_PHOTOS = 186
 total_photos = sum(len(m["files"]) for m in manifest)
 check("no photos dropped vs baseline", total_photos >= BASELINE_TOTAL_PHOTOS,
       f"found {total_photos}")
@@ -297,7 +298,7 @@ check("photos.js has scoped lightbox (no drawer code)",
 pp = LinkImgParser()
 pp.feed(photos)
 # lbIg href is populated by photos.js at runtime
-_js_anchors = 1  # lbIg
+_js_anchors = 2  # lbIg + albumPopIg
 check("photos: every <a> has a non-empty href (except JS-filled)",
       len(pp.bad_links) == _js_anchors, str(pp.bad_links))
 # lbImg alt is populated by photos.js at runtime
