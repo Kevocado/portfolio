@@ -59,7 +59,7 @@ for legacy in ["theme-editorial.css", "theme-darkroom.css",
     check(f"index does not reference legacy {legacy}", legacy not in index)
 
 # ---------- 3. v4 design tokens ----------
-for token in ["#0a192f", "#112240", "#8892b0", "#ccd6f6", "#64ffda",
+for token in ["#0c0c0e", "#17171b", "#8892b0", "#ccd6f6", "#64ffda",
               "JetBrains Mono", "--nav-height", "--green-tint"]:
     check(f"main.css uses v4 token {token}", token in main_css)
 
