@@ -1,6 +1,7 @@
-/* Photography page interactions: featured marquee highlight, shoot
-   accordion drawers, and the on-site lightbox. Photos never navigate away;
-   the only Instagram exits are explicit "View full post on Instagram" links. */
+/* Photography page interactions: featured reel (auto-scroll + manual
+   arrows/drag), shoot accordion drawers, and the on-site lightbox. Photos
+   never navigate away; the only Instagram exits are explicit
+   "View full post on Instagram" links. */
 (function () {
   'use strict';
 
@@ -23,32 +24,120 @@
     });
   });
 
-  /* ---------- Featured marquee: highlight the centered photo ---------- */
-  var marquee = document.getElementById('marquee');
-  var track = document.getElementById('marqueeTrack');
-  var caption = document.getElementById('marqueeCaption');
-  if (marquee && track) {
-    var mItems = Array.prototype.slice.call(
-      track.querySelectorAll('.marquee-item'));
+  /* ---------- Featured reel: auto-scroll + arrows + drag ---------- */
+  var reel = document.getElementById('reel');
+  var track = document.getElementById('reelTrack');
+  var caption = document.getElementById('reelCaption');
+  var reelPrev = document.getElementById('reelPrev');
+  var reelNext = document.getElementById('reelNext');
+  if (reel && track) {
+    var rItems = Array.prototype.slice.call(
+      track.querySelectorAll('.reel-item'));
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var autoOn = !reduceMotion;
+    var hoverPause = false;
+    var interactPauseUntil = 0;
+    var dragging = false;
+    var dragMoved = 0;
+    var dragStartX = 0;
+    var dragStartScroll = 0;
+    var dragSuppressClick = false;
+    var SPEED = 0.55; /* px per frame */
+
+    function halfWidth() {
+      return track.scrollWidth / 2;
+    }
+
     function highlight() {
-      var r = marquee.getBoundingClientRect();
+      var r = reel.getBoundingClientRect();
       var cx = r.left + r.width / 2;
       var best = null, bestD = Infinity;
-      mItems.forEach(function (el) {
+      rItems.forEach(function (el) {
         var er = el.getBoundingClientRect();
         var d = Math.abs((er.left + er.width / 2) - cx);
         if (d < bestD) { bestD = d; best = el; }
       });
-      mItems.forEach(function (el) {
+      rItems.forEach(function (el) {
         el.classList.toggle('is-center', el === best);
       });
       if (best && caption) {
         caption.textContent = best.getAttribute('data-title');
       }
     }
-    setInterval(function () {
-      if (!document.hidden) { highlight(); }
-    }, 400);
+
+    function tick() {
+      var now = Date.now();
+      if (autoOn && !hoverPause && !dragging && now > interactPauseUntil &&
+          !document.hidden) {
+        reel.scrollLeft += SPEED;
+        var hw = halfWidth();
+        if (hw > 0 && reel.scrollLeft >= hw) {
+          reel.scrollLeft -= hw;
+        }
+      }
+      highlight();
+      requestAnimationFrame(tick);
+    }
+
+    function pauseForInteraction() {
+      interactPauseUntil = Date.now() + 3500;
+    }
+
+    reel.addEventListener('mouseenter', function () { hoverPause = true; });
+    reel.addEventListener('mouseleave', function () {
+      hoverPause = false;
+      dragging = false;
+      reel.classList.remove('dragging');
+    });
+    reel.addEventListener('wheel', pauseForInteraction, { passive: true });
+    reel.addEventListener('touchstart', pauseForInteraction, { passive: true });
+
+    /* Mouse drag-to-scroll (touch uses native scrolling). */
+    reel.addEventListener('pointerdown', function (e) {
+      if (e.pointerType !== 'mouse' || e.button !== 0) { return; }
+      dragging = true;
+      dragMoved = 0;
+      dragSuppressClick = false;
+      dragStartX = e.clientX;
+      dragStartScroll = reel.scrollLeft;
+      reel.classList.add('dragging');
+      pauseForInteraction();
+    });
+    window.addEventListener('pointermove', function (e) {
+      if (!dragging) { return; }
+      var dx = e.clientX - dragStartX;
+      dragMoved = Math.max(dragMoved, Math.abs(dx));
+      reel.scrollLeft = dragStartScroll - dx;
+    });
+    window.addEventListener('pointerup', function () {
+      if (!dragging) { return; }
+      dragging = false;
+      reel.classList.remove('dragging');
+      if (dragMoved > 8) { dragSuppressClick = true; }
+    });
+
+    function nudge(dir) {
+      pauseForInteraction();
+      reel.scrollBy({ left: dir * 360, behavior: 'smooth' });
+    }
+    if (reelPrev) {
+      reelPrev.addEventListener('click', function () { nudge(-1); });
+    }
+    if (reelNext) {
+      reelNext.addEventListener('click', function () { nudge(1); });
+    }
+
+    /* Suppress the lightbox click when a drag just ended. */
+    document.addEventListener('click', function (e) {
+      if (dragSuppressClick) {
+        dragSuppressClick = false;
+        e.stopPropagation();
+        e.preventDefault();
+      }
+    }, true);
+
+    requestAnimationFrame(tick);
     highlight();
   }
 

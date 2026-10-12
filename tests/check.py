@@ -135,7 +135,7 @@ for gone in ["San Francisco", "san-francisco", "Fly Kids Community",
 # ---------- 10. photos.html: manifest parity (files are {src, post}) ----------
 manifest = json.loads((SITE / "assets" / "photos" / "manifest.json")
                       .read_text(encoding="utf-8"))
-check("manifest has 29 shoots", len(manifest) == 29,
+check("manifest has >= 29 shoots", len(manifest) >= 29,
       f"found {len(manifest)}")
 cats = {m["category"] for m in manifest}
 check("manifest categories are exactly Fashion/Editorial/Portrait",
@@ -145,38 +145,95 @@ check("manifest has 3 featured shoots",
 check("no single-photo shoots",
       all(len(m["files"]) >= 2 for m in manifest),
       str([m["slug"] for m in manifest if len(m["files"]) < 2]))
+# per-shoot counts must never shrink vs the 2026-10-12 150-photo baseline
+PREV_COUNTS = {
+    "cole-pearl-jacket": 5, "yuna-seki-spring": 5, "daily-paper-nyfw": 5,
+    "midnight-runway": 5, "enwhy-eclaires": 5, "yorisport-f23": 4,
+    "cole-pearl-jacket-b": 5, "model-shoots": 6, "blocking-out-the-sun": 6,
+    "just-business": 5, "flykids-events": 4, "runway7-nyfw": 5,
+    "shoot-for-the-stars": 5, "fair-blue": 5, "emerald-bliss": 5,
+    "nyfw-favorites": 5, "runway7-fw": 5, "enchanted-forests": 6,
+    "primadonna-zine": 5, "earl-doechii": 5, "match-my-freak": 5,
+    "love-space-time": 5, "vulnerability": 5, "grad-shoots": 6,
+    "fw-portraits": 5, "flykids-y2k-portraits": 6, "sierrayne-birthday": 6,
+    "midnight-in-white": 5, "beach-shoot": 6,
+}
+shrunk = [(m["slug"], len(m["files"]), PREV_COUNTS[m["slug"]])
+          for m in manifest if m["slug"] in PREV_COUNTS
+          and len(m["files"]) < PREV_COUNTS[m["slug"]]]
+check("no shoot lost photos vs baseline", not shrunk, str(shrunk)[:200])
 check("manifest files are {src, post} objects",
       all(isinstance(f, dict) and "src" in f and "post" in f
           for m in manifest for f in m["files"]))
 
 photo_srcs = re.findall(r'<img[^>]+src="([^"]+)"', photos)
 manifest_files = [f["src"] for m in manifest for f in m["files"]]
+thumb_srcs = {f"assets/photos/thumbs/{m['slug']}.jpg" for m in manifest}
 check("every manifest file appears as an <img> src or in gallery JSON",
       set(manifest_files) <= set(photo_srcs) | set(
           re.findall(r'"src": "([^"]+)"', photos)),
       str((set(manifest_files) - set(photo_srcs)) -
           set(re.findall(r'"src": "([^"]+)"', photos)))[:200])
-check("every <img> src is in the manifest",
-      set(photo_srcs) <= set(manifest_files),
-      str(set(photo_srcs) - set(manifest_files))[:200])
+check("every <img> src is in the manifest or is a shoot thumbnail",
+      set(photo_srcs) <= set(manifest_files) | thumb_srcs,
+      str(set(photo_srcs) - set(manifest_files) - thumb_srcs)[:200])
 missing = [s for s in manifest_files if not (SITE / s).is_file()]
 check("all manifest files exist on disk", not missing, ", ".join(missing[:5]))
-check("150 photos total", len(manifest_files) == 150,
+check(">= 150 photos total", len(manifest_files) >= 150,
       f"found {len(manifest_files)}")
 
-# ---------- 11. featured marquee: 6 photos, auto-scroll ----------
-check("marquee markup present",
-      'id="marquee"' in photos and 'id="marqueeTrack"' in photos
-      and 'marquee-scroll' in (SITE / "css" / "photos.css").read_text())
-marquee_items = re.findall(r'<button[^>]+class="marquee-item"[^>]*>', photos)
-visible_items = [b for b in marquee_items if 'aria-hidden="true"' not in b]
-check("featured marquee shows exactly 6 photos", len(visible_items) == 6,
+# ---------- 11. featured reel: 6 photos, auto-scroll + manual control ----------
+photos_css = (SITE / "css" / "photos.css").read_text(encoding="utf-8")
+photos_js = (SITE / "js" / "photos.js").read_text(encoding="utf-8")
+check("reel markup present",
+      'id="reel"' in photos and 'id="reelTrack"' in photos)
+reel_items = re.findall(r'<button[^>]+class="reel-item"[^>]*>', photos)
+visible_items = [b for b in reel_items if 'aria-hidden="true"' not in b]
+check("featured reel shows exactly 6 photos", len(visible_items) == 6,
       f"found {len(visible_items)}")
-check("marquee pauses on hover",
-      ".marquee:hover .marquee-track" in (SITE / "css" / "photos.css").read_text())
-check("marquee items open lightbox, not Instagram",
+check("reel has manual arrow controls",
+      'id="reelPrev"' in photos and 'id="reelNext"' in photos
+      and 'class="reel-arrow' in photos)
+check("reel has drag-to-scroll",
+      "pointerdown" in photos_js and "dragging" in photos_js)
+check("reel auto-scrolls via JS",
+      "requestAnimationFrame" in photos_js and "scrollLeft" in photos_js)
+check("reel pauses on hover",
+      "mouseenter" in photos_js and "hoverPause" in photos_js)
+check("reel items open lightbox, not Instagram",
       all('data-idx=' in b for b in visible_items)
       and not any('instagram.com' in b for b in visible_items))
+check("no Photography section heading on page",
+      "<h1" not in photos and "Photography." not in photos)
+
+# ---------- 11b. thumbnails: taller portrait aspect, face-aware ----------
+check("shoot-card thumbnails use 3:4 portrait aspect",
+      "aspect-ratio: 3 / 4" in photos_css)
+missing_thumbs = [m["slug"] for m in manifest
+                  if not (SITE / "assets" / "photos" / "thumbs" /
+                          (m["slug"] + ".jpg")).is_file()]
+check("every shoot has a thumbnail", not missing_thumbs,
+      ", ".join(missing_thumbs[:5]))
+card_imgs = re.findall(
+    r'<button[^>]+class="shoot-card"[^>]*>.*?<img[^>]+src="([^"]+)"',
+    photos, re.S)
+check("shoot cards use thumbs/ directory",
+      all(i.startswith("assets/photos/thumbs/") for i in card_imgs),
+      str([i for i in card_imgs
+           if not i.startswith("assets/photos/thumbs/")])[:150])
+try:
+    from PIL import Image as _PIL
+    bad_ratio = []
+    for m in manifest:
+        p = SITE / "assets" / "photos" / "thumbs" / (m["slug"] + ".jpg")
+        if p.is_file():
+            w, h = _PIL.open(p).size
+            if abs(w / h - 0.75) > 0.02:
+                bad_ratio.append(m["slug"])
+    check("thumbnails are 3:4 portrait", not bad_ratio, str(bad_ratio)[:150])
+except ImportError:
+    check("thumbnails are 3:4 portrait (PIL unavailable)", False,
+          "PIL not installed")
 
 # ---------- 12. lightbox ----------
 for frag in ['id="lightbox"', 'role="dialog"', 'id="lbClose"',

@@ -1,35 +1,44 @@
 /* Photography page - Brittany Chiang v4 tokens. Flat colors only, no gradients. */
 
-/* ---------- Featured marquee ---------- */
-.marquee {
-  overflow: hidden;
+/* ---------- Featured reel (auto-scroll + manual control) ---------- */
+.reel-section {
+  padding-top: 110px;
+}
+
+.reel-wrap {
   position: relative;
   margin: 8px -20px 0;
+}
+
+.reel {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
   padding: 12px 0;
   box-shadow: inset 70px 0 50px -50px #0a192f, inset -70px 0 50px -50px #0a192f;
 }
 
-.marquee-track {
+.reel::-webkit-scrollbar {
+  display: none;
+}
+
+.reel.dragging {
+  cursor: grabbing;
+}
+
+.reel-track {
   display: flex;
   width: max-content;
-  animation: marquee-scroll 55s linear infinite;
 }
 
-.marquee:hover .marquee-track {
-  animation-play-state: paused;
-}
-
-@keyframes marquee-scroll {
-  to { transform: translateX(-50%); }
-}
-
-.marquee-group {
+.reel-group {
   display: flex;
   gap: 20px;
   padding-right: 20px;
 }
 
-.marquee-item {
+.reel-item {
   background: none;
   border: none;
   padding: 0;
@@ -39,7 +48,11 @@
   flex: 0 0 auto;
 }
 
-.marquee-item img {
+.reel.dragging .reel-item {
+  cursor: grabbing;
+}
+
+.reel-item img {
   display: block;
   height: 300px;
   width: auto;
@@ -48,14 +61,49 @@
   border-radius: var(--border-radius);
   transition: transform 0.45s ease, box-shadow 0.45s ease;
   box-shadow: 0 0 0 1px rgba(100, 255, 218, 0.12);
+  pointer-events: none;
 }
 
-.marquee-item.is-center img {
+.reel-item.is-center img {
   transform: scale(1.07);
   box-shadow: 0 0 0 2px var(--green), 0 18px 44px -14px var(--navy-shadow);
 }
 
-.marquee-caption {
+.reel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+  background: var(--light-navy);
+  border: 1px solid var(--lightest-navy);
+  color: var(--lightest-slate);
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  opacity: 0.9;
+}
+
+.reel-arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.reel-arrow:hover {
+  border-color: var(--green);
+  color: var(--green);
+  opacity: 1;
+}
+
+.reel-prev { left: 12px; }
+.reel-next { right: 12px; }
+.reel-next svg { transform: rotate(180deg); }
+
+.reel-caption {
   font-family: var(--font-mono);
   font-size: var(--fz-sm);
   color: var(--green);
@@ -65,7 +113,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none; }
+  .reel { scroll-behavior: auto; }
 }
 
 /* ---------- Shoot cards + drawer ---------- */
@@ -103,7 +151,8 @@
 .shoot-card-thumb img {
   display: block;
   width: 100%;
-  height: 220px;
+  aspect-ratio: 3 / 4;
+  height: auto;
   object-fit: cover;
   transition: var(--transition);
 }
@@ -312,8 +361,10 @@
 .lb-next { right: 20px; top: 50%; transform: translateY(-50%); }
 
 @media (max-width: 768px) {
-  .marquee-item img { height: 220px; }
-  .shoot-card-thumb img { height: 180px; }
+  .reel-item img { height: 220px; }
+  .reel-arrow { width: 38px; height: 38px; }
+  .reel-prev { left: 6px; }
+  .reel-next { right: 6px; }
   .dframe img { height: 200px; }
   .lb-prev { left: 8px; }
   .lb-next { right: 8px; }
