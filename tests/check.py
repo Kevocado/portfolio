@@ -83,7 +83,7 @@ check("nav has 4 numbered sections + photography",
 
 # ---------- 6. content ----------
 for phrase in ["Hi, my name is", "Kevin Sigey.",
-               "A quant who communicates well",
+               "Quantitative problem solver and clear communicator",
                "01.", "About Me", "02.", "Where I",
                "03.", "Some Things I",
                "04.", "Get In Touch",
