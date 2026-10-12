@@ -1067,19 +1067,6 @@
     ]
   },
   {
-    "slug": "back-and-better",
-    "title": "Back and Better",
-    "category": "Fashion",
-    "post_url": "https://www.instagram.com/p/Cw-T_Z4rB0PT8nxoKVd80FR09OsKKpl1O-XG2k0/",
-    "featured": false,
-    "files": [
-      {
-        "src": "assets/photos/shoots/back-and-better/f1.jpg",
-        "post": "https://www.instagram.com/p/Cw-T_Z4rB0PT8nxoKVd80FR09OsKKpl1O-XG2k0/"
-      }
-    ]
-  },
-  {
     "slug": "all-up-in-ur-mind",
     "title": "All Up in Ur Mind",
     "category": "Fashion",
@@ -1353,19 +1340,6 @@
     ]
   },
   {
-    "slug": "album-release-party",
-    "title": "Album Release Party",
-    "category": "Editorial",
-    "post_url": "https://www.instagram.com/p/C7scvGHxSxD/",
-    "featured": false,
-    "files": [
-      {
-        "src": "assets/photos/shoots/album-release-party/f1.jpg",
-        "post": "https://www.instagram.com/p/C7scvGHxSxD/"
-      }
-    ]
-  },
-  {
     "slug": "2024-recap",
     "title": "2024 Recap",
     "category": "Editorial",
@@ -1407,7 +1381,7 @@
   {
     "slug": "pixie-energy",
     "title": "Pixie Energy",
-    "category": "Portrait",
+    "category": "Fashion",
     "post_url": "https://www.instagram.com/p/Cw7o61DsOYI/",
     "featured": false,
     "files": [
