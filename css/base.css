@@ -73,6 +73,7 @@ img{max-width:100%;height:auto;display:block}
 .series-sub{font-size:14.5px;max-width:62ch;margin-bottom:28px}
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .photo{margin:0}
+.photo-link{display:block;line-height:0}
 .photo img{width:100%;aspect-ratio:4/5;object-fit:cover}
 .photo figcaption{padding-top:10px;font-size:13px;line-height:1.5}
 .photo figcaption .cap-title{display:block;font-size:14.5px}
