@@ -408,6 +408,13 @@ main {
   font-size: 22px;
   font-weight: 600;
 }
+.card-title a {
+  color: inherit;
+  text-decoration: none;
+}
+.card-title a:hover {
+  color: var(--green);
+}
 
 .card-desc { color: var(--light-slate); font-size: 17px; }
 
