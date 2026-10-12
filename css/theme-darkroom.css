@@ -1,0 +1,115 @@
+/* theme-darkroom.css — the "quant darkroom" direction: near-black, film grain,
+   monospace data details, one warm amber accent.
+   Scoped under html[data-theme="darkroom"]. Owns all color, type, texture. */
+
+html[data-theme="darkroom"]{
+  --bg:#0e0f11;
+  --bg2:#141619;
+  --ink:#e8e6e1;
+  --muted:#9a978e;
+  --faint:#5c5a54;
+  --accent:#e2a63d;
+  --line:rgba(232,230,225,.12);
+  --card:#16181b;
+  --gray-dot:#6b7280;
+}
+
+html[data-theme="darkroom"] body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+}
+
+/* film grain — CSS/SVG only */
+html[data-theme="darkroom"] body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+html[data-theme="darkroom"] ::selection{background:var(--accent);color:#141414}
+
+/* masthead */
+html[data-theme="darkroom"] .masthead{border-bottom-color:var(--line);text-align:left}
+html[data-theme="darkroom"] .dateline{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px}
+html[data-theme="darkroom"] .nameplate{font-weight:700;letter-spacing:.02em;font-size:clamp(24px,4vw,34px)}
+html[data-theme="darkroom"] .nameplate em{font-style:normal;color:var(--accent)}
+
+/* nav */
+html[data-theme="darkroom"] .nav{border-bottom-color:var(--line)}
+html[data-theme="darkroom"] .nav-inner{color:var(--muted);font-size:14px;letter-spacing:.04em;text-transform:none;justify-content:flex-end}
+html[data-theme="darkroom"] .nav-inner a{transition:color .2s}
+html[data-theme="darkroom"] .nav-inner a:hover{color:var(--ink)}
+html[data-theme="darkroom"] .ext::after{content:"↗";font-size:11px;margin-left:4px;color:var(--faint)}
+
+/* cover */
+html[data-theme="darkroom"] .kicker{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:13px;letter-spacing:.14em}
+html[data-theme="darkroom"] .headline{font-weight:700;letter-spacing:-.02em}
+html[data-theme="darkroom"] .headline em{font-style:normal;color:var(--muted);font-weight:500}
+html[data-theme="darkroom"] .standfirst{color:var(--muted)}
+html[data-theme="darkroom"] .byline{border-top-color:var(--line);color:var(--faint)}
+html[data-theme="darkroom"] .pullquote{border-left-color:var(--accent)}
+html[data-theme="darkroom"] .pullquote blockquote{font-style:italic;color:var(--ink);font-size:20px}
+html[data-theme="darkroom"] .pullquote cite{color:var(--muted)}
+
+/* sections */
+html[data-theme="darkroom"] .doors-section,
+html[data-theme="darkroom"] .work{border-top-color:var(--line)}
+html[data-theme="darkroom"] .agentic{border-top-color:var(--line);border-bottom-color:var(--line);background:var(--bg2)}
+html[data-theme="darkroom"] .sec-no{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--faint)}
+html[data-theme="darkroom"] .sec-title{font-weight:700;letter-spacing:-.01em;font-size:26px}
+html[data-theme="darkroom"] .sec-sub{color:var(--muted)}
+
+/* doors as cards */
+html[data-theme="darkroom"] .doors{border-color:transparent;gap:20px}
+html[data-theme="darkroom"] .door{background:var(--card);border-color:var(--line);border-radius:14px}
+html[data-theme="darkroom"] .door + .door{border-left-color:var(--line)}
+html[data-theme="darkroom"] .door:hover{transform:translateY(-4px);border-color:rgba(226,166,61,.45)}
+html[data-theme="darkroom"] .door .folio{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12px}
+html[data-theme="darkroom"] .door h3{letter-spacing:-.01em;font-size:26px;font-weight:700}
+html[data-theme="darkroom"] .door h3 em{font-style:normal}
+html[data-theme="darkroom"] .door p{color:var(--muted)}
+html[data-theme="darkroom"] .door .cta{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:13px}
+
+/* agentic cards */
+html[data-theme="darkroom"] .ledger{border-color:transparent;gap:20px}
+html[data-theme="darkroom"] .entry{background:var(--card);border-color:var(--line);border-radius:12px}
+html[data-theme="darkroom"] .entry + .entry{border-left-color:var(--line)}
+html[data-theme="darkroom"] .entry .desk{font-family:'JetBrains Mono',monospace;color:var(--faint);font-size:11.5px}
+html[data-theme="darkroom"] .entry h3{font-size:18px;letter-spacing:-.01em}
+html[data-theme="darkroom"] .entry p{color:var(--muted)}
+html[data-theme="darkroom"] .entry .standing{border-top-color:var(--line);font-style:normal;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--muted)}
+html[data-theme="darkroom"] .entry .dot{background:var(--accent);box-shadow:0 0 8px rgba(226,166,61,.8)}
+html[data-theme="darkroom"] .entry:nth-child(2) .dot{background:var(--gray-dot);box-shadow:none}
+
+/* work index */
+html[data-theme="darkroom"] .index{border-top-color:var(--line)}
+html[data-theme="darkroom"] .index-row{border-bottom-color:var(--line)}
+html[data-theme="darkroom"] .index-row .date{font-family:'JetBrains Mono',monospace;color:var(--faint);font-size:12.5px}
+html[data-theme="darkroom"] .index-row h3{font-weight:600;letter-spacing:-.01em;font-size:18px}
+html[data-theme="darkroom"] .index-row h3 .role{color:var(--muted);font-weight:500}
+html[data-theme="darkroom"] .index-row p{color:var(--muted)}
+
+/* colophon */
+html[data-theme="darkroom"] .colophon{background:var(--bg2);border-top-width:1px;border-top-style:solid;border-top-color:var(--line)}
+html[data-theme="darkroom"] .colophon .contact-lede{color:var(--muted)}
+html[data-theme="darkroom"] .ccard{border-color:var(--line);background:var(--card);border-radius:10px;font-weight:500}
+html[data-theme="darkroom"] .ccard:hover{border-color:var(--accent)}
+html[data-theme="darkroom"] .ccard .k{color:var(--faint);font-family:'JetBrains Mono',monospace;font-size:12px}
+html[data-theme="darkroom"] .theme-switcher{color:var(--muted)}
+html[data-theme="darkroom"] .theme-switcher button{border-color:var(--line);color:var(--ink)}
+html[data-theme="darkroom"] .theme-switcher button[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+html[data-theme="darkroom"] .colophon-foot{border-top-color:var(--line);color:var(--faint)}
+
+/* repo links */
+html[data-theme="darkroom"] .entry .repo a{font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:12.5px}
+html[data-theme="darkroom"] .entry .repo a:hover{text-decoration:underline}
+
+/* gallery */
+html[data-theme="darkroom"] .gallery-lede{color:var(--muted)}
+html[data-theme="darkroom"] .series{border-top-color:var(--line)}
+html[data-theme="darkroom"] .series-no{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--faint)}
+html[data-theme="darkroom"] .series-title{font-weight:700;font-size:24px;letter-spacing:-.01em}
+html[data-theme="darkroom"] .series-sub{color:var(--muted)}
+html[data-theme="darkroom"] .photo img{border-radius:8px}
+html[data-theme="darkroom"] .photo figcaption .cap-title{color:var(--ink);font-weight:600}
+html[data-theme="darkroom"] .photo figcaption .cap-meta{font-family:'JetBrains Mono',monospace;color:var(--faint);font-size:12px}
