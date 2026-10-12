@@ -1,176 +1,206 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="darkroom">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kevin Sigey — A quant who communicates well</title>
-<meta name="description" content="Kevin Sigey: a quant who communicates well. Predictive models, agentic AI systems, and professional experience. MS Business Analytics, UIUC December 2026.">
+<title>Kevin Sigey: A quant who communicates well</title>
+<meta name="description" content="Kevin Sigey is a quant who communicates well. MS Business Analytics, UIUC December 2026. Predictive models, agentic AI systems, and professional experience.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/theme-editorial.css">
-<link rel="stylesheet" href="css/theme-darkroom.css">
-<link rel="stylesheet" href="css/theme-terminal.css">
-<script>
-/* Apply the persisted edition before first paint to avoid a theme flash. */
-try {
-  var t = localStorage.getItem("ksigey-edition");
-  if (t === "editorial" || t === "darkroom" || t === "terminal") {
-    document.documentElement.setAttribute("data-theme", t);
-  }
-} catch (e) {}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
-<header class="masthead">
-  <div class="wrap">
-    <p class="dateline">Urbana, Illinois</p>
-    <p class="nameplate"><em>Kevin Sigey</em></p>
-  </div>
+<header class="site-header" id="siteHeader">
+  <nav class="nav" aria-label="Primary">
+    <div class="logo"><a href="#top" aria-label="Home">K</a></div>
+    <ol class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li class="nav-photo"><a href="photos.html">Photography</a></li>
+    </ol>
+    <div class="nav-cta"><a class="btn btn-small" href="assets/resume.pdf" target="_blank" rel="noopener">Resume</a></div>
+    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
 </header>
 
-<nav class="nav" aria-label="Primary">
-  <div class="wrap nav-inner">
-    <a href="#work">Work</a>
-    <a href="#lab">Lab</a>
-    <a href="photos.html" class="ext">Photography</a>
-    <a href="#contact">Contact</a>
-  </div>
-</nav>
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <nav aria-label="Mobile">
+    <ol>
+      <li><a href="#about">About</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="photos.html">Photography</a></li>
+    </ol>
+    <a class="btn" href="assets/resume.pdf" target="_blank" rel="noopener">Resume</a>
+  </nav>
+</div>
 
-<main>
+<aside class="rail rail-left" aria-label="Social links">
+  <a href="https://github.com/Kevocado" target="_blank" rel="noopener" aria-label="GitHub">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+  </a>
+  <a href="https://www.linkedin.com/in/kevin-sigey-72a5501b5" target="_blank" rel="noopener" aria-label="LinkedIn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4V8h4v2a6 6 0 0 1 2-2z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+  </a>
+</aside>
 
-  <div class="wrap">
+<aside class="rail rail-right" aria-label="Email">
+  <a href="mailto:sigeykevin@gmail.com">sigeykevin@gmail.com</a>
+</aside>
 
-  <section class="cover" aria-label="Introduction">
-    <div class="cover-main">
-      <p class="kicker">Portfolio</p>
-      <h1 class="headline">A quant who <em>communicates</em> well.</h1>
-      <p class="standfirst">Kevin Sigey is finishing his M.S. in Business Analytics at UIUC this December. He builds predictive models and agentic AI systems, and is open to analyst roles starting in 2027.</p>
-      <p class="byline"><span>MS in Business Analytics</span><span>University of Illinois</span><span>December 2026</span></p>
-    </div>
-    <aside class="pullquote">
-      <blockquote>"I direct AI agent teams that design, build, test, and deploy real software, with review gates at every step."</blockquote>
-      <cite>Kevin Sigey, on agentic development</cite>
-    </aside>
+<main id="top">
+
+  <section class="hero" aria-label="Introduction">
+    <p class="eyebrow">Hi, my name is</p>
+    <h1 class="big-heading">Kevin Sigey.</h1>
+    <h2 class="big-heading dim">A quant who communicates well.</h2>
+    <p class="hero-text">I am a master&rsquo;s student in Business Analytics at UIUC, graduating this December. I build predictive models and agentic AI systems, and explain both so clearly that a non-technical stakeholder can act on them.</p>
+    <a class="btn btn-big" href="mailto:sigeykevin@gmail.com">Get In Touch</a>
   </section>
 
-  <section class="doors-section" aria-label="Sections">
-    <div class="sec-head"><span class="sec-no"></span><h2 class="sec-title">Explore</h2></div>
-    <p class="sec-sub">Professional experience and technical projects.</p>
-    <div class="doors">
-      <a class="door" href="#work">
-        <p class="folio">Professional</p>
-        <h3><em>Work</em></h3>
-        <p>Banking, consulting, and capstone experience.</p>
-        <p class="cta">View work →</p>
-      </a>
-      <a class="door" href="#lab">
-        <p class="folio">Technical</p>
-        <h3><em>Lab</em></h3>
-        <p>Predictive models and agentic AI systems.</p>
-        <p class="cta">View lab →</p>
-      </a>
-    </div>
-  </section>
-
-  </div><!-- /.wrap -->
-
-  <section class="agentic" id="lab" aria-label="Agentic development">
-    <div class="wrap">
-    <div class="sec-head"><span class="sec-no"></span><h2 class="sec-title">Agentic Development</h2></div>
-    <p class="sec-sub">Real systems designed, built, tested, and deployed by AI agent teams under Kevin's direction, with current status for each.</p>
-    <div class="ledger">
-      <article class="entry">
-        <p class="desk">Production</p>
-        <h3>Predictor Hub</h3>
-        <p>Six sports prediction models (NFL, college football, NBA, Premier League, and F1) running as containers on Azure, built and maintained through subagent-driven development.</p>
-        <p class="standing"><span class="dot" aria-hidden="true"></span>Status: Live.</p>
-        <p class="repo"><a href="https://github.com/Kevocado/predictor-hub" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">↗</span></a><span class="repo-sep" aria-hidden="true"> · </span><a href="https://40-160-91-131.sslip.io" target="_blank" rel="noopener">Live app <span aria-hidden="true">↗</span></a></p>
-      </article>
-      <article class="entry">
-        <p class="desk">Rebuild</p>
-        <h3>Algo Trade Hub</h3>
-        <p>Prediction systems for CPI, Fed rate cuts, equities, and crypto on free data, rebuilt by agent teams into portfolio-grade software.</p>
-        <p class="standing"><span class="dot" aria-hidden="true"></span>Status: In active rebuild.</p>
-        <p class="repo"><a href="https://github.com/Kevocado/algo-trade-hub-prod" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">↗</span></a></p>
-      </article>
-      <article class="entry">
-        <p class="desk">Pipeline</p>
-        <h3>Stablecoin Remittance Monitor</h3>
-        <p>A live monitor of stablecoin remittance flows with a weekly data refresh.</p>
-        <p class="standing"><span class="dot" aria-hidden="true"></span>Status: Pipeline running.</p>
-        <p class="repo"><a href="https://github.com/Kevocado/Stable-Coin-Analysis" target="_blank" rel="noopener">View on GitHub <span aria-hidden="true">↗</span></a></p>
-      </article>
-    </div>
-    </div><!-- /.wrap -->
-  </section>
-
-  <div class="wrap">
-
-  <section class="work" id="work" aria-label="Work">
-    <div class="sec-head"><span class="sec-no"></span><h2 class="sec-title">Work Experience</h2></div>
-    <p class="sec-sub">Selected professional experience.</p>
-    <div class="index">
-      <article class="index-row">
-        <p class="date">Jul 2026 – Sep 2026</p>
-        <div>
-          <h3>Busey Bank <span class="role">— Treasury &amp; ALM, Finance Intern</span></h3>
-          <p>Built a deposit matching engine and researched stablecoin policy (GENIUS Act) for the treasury team.</p>
-        </div>
-      </article>
-      <article class="index-row">
-        <p class="date">Sep 2026 – present</p>
-        <div>
-          <h3>Illinois Business Consulting <span class="role">— RAMP Student Consultant</span></h3>
-          <p>Leading quantitative analysis on a curriculum modernization and AI strategy workstream for a live client.</p>
-        </div>
-      </article>
-      <article class="index-row">
-        <p class="date">Aug 2024 – May 2025</p>
-        <div>
-          <h3>NYU Tandon Consulting Club <span class="role">— VP of Events</span></h3>
-          <p>Grew membership from 150 to 450 through partnerships with McKinsey and Deloitte.</p>
-        </div>
-      </article>
-      <article class="index-row">
-        <p class="date">UIUC MSBA capstone</p>
-        <div>
-          <h3>Dot Foods <span class="role">— Project Lead, 6-person team</span></h3>
-          <p>Led the capstone engagement end to end, from scoping to final delivery.</p>
-        </div>
-      </article>
+  <section class="section" id="about" aria-label="About">
+    <h2 class="section-heading"><span class="num">01.</span> About Me</h2>
+    <div class="about-inner">
+      <div class="about-text">
+        <p>I direct AI agent teams that design, build, test, and deploy real software, with review gates at every step. My work sits where quantitative rigor meets clear communication: six sports prediction models running live in production, plus the systems behind them.</p>
+        <p>Previously a Finance Intern in Treasury &amp; ALM at Busey Bank and VP of Events at NYU&rsquo;s Tandon Consulting Club, now a Student Consultant with Illinois Business Consulting. I am open to analyst roles starting in 2027.</p>
+        <p>Here are a few technologies I work with:</p>
+        <ul class="skills-list">
+          <li>Python (pandas, Scikit-learn, LightGBM)</li>
+          <li>SQL</li>
+          <li>R</li>
+          <li>AWS SageMaker</li>
+          <li>Financial Modeling</li>
+          <li>Power BI &amp; Tableau</li>
+          <li>Excel (VBA, Power Pivot)</li>
+          <li>Machine Learning</li>
+          <li>Data Visualization</li>
+          <li>Market Sizing</li>
+          <li>MECE Frameworks</li>
+          <li>GitHub Actions (CI/CD)</li>
+        </ul>
+      </div>
     </div>
   </section>
 
-  </div><!-- /.wrap -->
+  <section class="section" id="experience" aria-label="Experience">
+    <h2 class="section-heading"><span class="num">02.</span> Where I&rsquo;ve Worked</h2>
+    <div class="tabs">
+      <div class="tab-list" role="tablist" aria-label="Jobs">
+        <button class="tab-btn active" role="tab" aria-selected="true" data-tab="job-ibc">IBC</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="job-busey">Busey Bank</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="job-tandon">Tandon CC</button>
+        <button class="tab-btn" role="tab" aria-selected="false" data-tab="job-dotfoods">Dot Foods</button>
+      </div>
+      <div class="tab-panels">
+        <div class="tab-panel active" id="job-ibc" role="tabpanel">
+          <h3>Student Consultant <span class="at">@ Illinois Business Consulting</span></h3>
+          <p class="range">Sep 2026 &ndash; Present</p>
+          <ul>
+            <li>Selected through a competitive, multi-round case-based process for UIUC&rsquo;s student consulting organization.</li>
+            <li>Leading quantitative analysis and market research on a curriculum modernization and AI strategy workstream for a live client.</li>
+          </ul>
+        </div>
+        <div class="tab-panel" id="job-busey" role="tabpanel">
+          <h3>Finance Intern <span class="at">@ Busey Bank, Treasury &amp; ALM</span></h3>
+          <p class="range">Jul 2026 &ndash; Sep 2026</p>
+          <ul>
+            <li>Built a deposit classification model separating internal product shifts from true external growth across $1B+ in transfers, validated to $0 variance.</li>
+            <li>Researched the GENIUS Act and stablecoin regulation and presented a proposal to management on leveraging stablecoins for deposit growth.</li>
+          </ul>
+        </div>
+        <div class="tab-panel" id="job-tandon" role="tabpanel">
+          <h3>VP of Events <span class="at">@ NYU Tandon Consulting Club</span></h3>
+          <p class="range">Aug 2024 &ndash; May 2025</p>
+          <ul>
+            <li>Grew club membership from 150 to 450 through partnerships with McKinsey and Deloitte.</li>
+            <li>Ran the events program end to end, from recruiting pipelines to flagship panels.</li>
+          </ul>
+        </div>
+        <div class="tab-panel" id="job-dotfoods" role="tabpanel">
+          <h3>Project Lead <span class="at">@ Dot Foods Capstone</span></h3>
+          <p class="range">UIUC MSBA Capstone</p>
+          <ul>
+            <li>Led a 6-person team end to end on the capstone engagement, from scoping to final delivery.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="work" aria-label="Projects">
+    <h2 class="section-heading"><span class="num">03.</span> Some Things I&rsquo;ve Built</h2>
+    <p class="section-lede">Real systems, designed, built, tested, and deployed by AI agent teams under my direction.</p>
+    <ul class="projects-grid">
+      <li class="project-card">
+        <div class="card-top">
+          <svg class="folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <div class="card-links">
+            <a href="https://github.com/Kevocado/predictor-hub" target="_blank" rel="noopener" aria-label="Predictor Hub on GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            </a>
+            <a href="https://40-160-91-131.sslip.io" target="_blank" rel="noopener" aria-label="Predictor Hub live app">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3 class="card-title">Predictor Hub</h3>
+        <p class="card-desc">Six sports prediction models (NFL, college football, NBA, Premier League, F1) running as containers on Azure, built and maintained through subagent-driven development.</p>
+        <p class="card-status"><span class="dot live" aria-hidden="true"></span>Status: Live</p>
+        <ul class="card-tech"><li>Python</li><li>Azure</li><li>Docker</li><li>Agents</li></ul>
+      </li>
+      <li class="project-card">
+        <div class="card-top">
+          <svg class="folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <div class="card-links">
+            <a href="https://github.com/Kevocado/algo-trade-hub-prod" target="_blank" rel="noopener" aria-label="Algo Trade Hub on GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3 class="card-title">Algo Trade Hub</h3>
+        <p class="card-desc">Prediction systems for CPI, Fed rate cuts, equities, and crypto on free data, rebuilt by agent teams into portfolio-grade software.</p>
+        <p class="card-status"><span class="dot building" aria-hidden="true"></span>Status: In active rebuild</p>
+        <ul class="card-tech"><li>Python</li><li>Free market data</li><li>Agents</li></ul>
+      </li>
+      <li class="project-card">
+        <div class="card-top">
+          <svg class="folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <div class="card-links">
+            <a href="https://github.com/Kevocado/Stable-Coin-Analysis" target="_blank" rel="noopener" aria-label="Stablecoin Remittance Monitor on GitHub">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            </a>
+          </div>
+        </div>
+        <h3 class="card-title">Stablecoin Remittance Monitor</h3>
+        <p class="card-desc">A live monitor of stablecoin remittance flows with a weekly data refresh. An always-on pipeline, not a notebook.</p>
+        <p class="card-status"><span class="dot building" aria-hidden="true"></span>Status: Pipeline running</p>
+        <ul class="card-tech"><li>SQL</li><li>Dune</li><li>Pipelines</li></ul>
+      </li>
+    </ul>
+  </section>
+
+  <section class="section contact" id="contact" aria-label="Contact">
+    <p class="eyebrow center">04. What&rsquo;s Next?</p>
+    <h2 class="big-heading center">Get In Touch</h2>
+    <p class="contact-text">I am open to analyst roles starting in 2027. Whether you have a role in mind or just want to talk models, my inbox is always open.</p>
+    <a class="btn btn-big" href="mailto:sigeykevin@gmail.com">Say Hello</a>
+  </section>
 
 </main>
 
-<footer class="colophon" id="contact">
-  <div class="wrap">
-    <div class="sec-head"><span class="sec-no"></span><h2 class="sec-title">Contact</h2></div>
-    <p class="contact-lede">Open to analyst roles starting in 2027.</p>
-    <div class="contact-cards">
-      <a class="ccard" href="mailto:sigeykevin@gmail.com"><span class="k">Email</span><span class="v">sigeykevin@gmail.com</span></a>
-      <a class="ccard" href="https://www.linkedin.com/in/kevin-sigey-72a5501b5" target="_blank" rel="noopener"><span class="k">LinkedIn</span><span class="v">kevin-sigey</span></a>
-      <a class="ccard" href="assets/resume.pdf" target="_blank" rel="noopener"><span class="k">Resume</span><span class="v">Download PDF</span></a>
-    </div>
-    <div class="theme-switcher" role="group" aria-label="Site edition">
-      <span class="ts-label">Edition</span>
-      <button type="button" data-set-theme="editorial" aria-pressed="true">Editorial</button>
-      <button type="button" data-set-theme="darkroom" aria-pressed="false">Darkroom</button>
-      <button type="button" data-set-theme="terminal" aria-pressed="false">Terminal</button>
-    </div>
-    <div class="colophon-foot">
-      <span>© 2026 Kevin Sigey</span>
-      <span class="colophon-note">All rights reserved.</span>
-    </div>
-  </div>
+<footer class="footer">
+  <p>Designed &amp; Built by Kevin Sigey</p>
+  <p class="footer-sub"><a href="https://github.com/Kevocado/portfolio" target="_blank" rel="noopener">Source on GitHub</a></p>
 </footer>
 
-<script src="js/theme.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
