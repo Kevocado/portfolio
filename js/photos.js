@@ -240,13 +240,9 @@
       if (f) { openLb(LIST, parseInt(f.getAttribute('data-pidx'), 10)); }
       return;
     }
-    var t = e.target.closest('[data-idx]');
-    if (t) {
-      openLb(ITEMS, parseInt(t.getAttribute('data-idx'), 10));
-      return;
-    }
-    var card = e.target.closest('.shoot-card');
-    if (card) { openAlbum(card.getAttribute('data-shoot')); }
+    /* Reel items and shoot cards both carry data-shoot: open the album. */
+    var t = e.target.closest('[data-shoot]');
+    if (t) { openAlbum(t.getAttribute('data-shoot')); }
   });
   lbClose.addEventListener('click', closeLb);
   lbPrev.addEventListener('click', function () { step(-1); });
