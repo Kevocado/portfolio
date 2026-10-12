@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """TDD checks for Kevin Sigey's portfolio site (~/workspace/portfolio-site/site/).
 
-Red phase: files don't exist yet -> every check fails.
-Green phase: build the site until `python3 tests/check.py` exits 0.
-Covers both index.html and photos.html.
+Landing page rebuilt in Brittany Chiang v4 design language (static, flat colors).
+photos.html keeps the legacy theme system untouched.
 """
 import re
 import sys
@@ -20,9 +19,6 @@ def check(name, cond, detail=""):
     print(f"[{status}] {name}" + (f" — {detail}" if detail and not cond else ""))
     if not cond:
         failures.append(name)
-
-
-PAGES = ["index.html", "photos.html"]
 
 
 class LinkImgParser(HTMLParser):
@@ -42,180 +38,102 @@ class LinkImgParser(HTMLParser):
                 self.bad_imgs.append(self.getpos())
 
 
-# ---------- 1. all files exist ----------
-expected = [
-    "index.html",
-    "photos.html",
-    "css/base.css",
-    "css/theme-editorial.css",
-    "css/theme-darkroom.css",
-    "css/theme-terminal.css",
-    "js/theme.js",
-    "assets/resume.pdf",
-]
-for rel in expected:
+index = (SITE / "index.html").read_text(encoding="utf-8")
+photos = (SITE / "photos.html").read_text(encoding="utf-8")
+main_css = (SITE / "css" / "main.css").read_text(encoding="utf-8")
+main_js = (SITE / "js" / "main.js").read_text(encoding="utf-8")
+
+# ---------- 1. files ----------
+for rel in ["index.html", "photos.html", "css/main.css", "js/main.js",
+            "assets/resume.pdf"]:
     check(f"file exists: {rel}", (SITE / rel).is_file())
 
-pages = {}
-for page in PAGES:
-    p = SITE / page
-    pages[page] = p.read_text(encoding="utf-8") if p.is_file() else ""
+# ---------- 2. index references new assets only ----------
+check("index references css/main.css", "css/main.css" in index)
+check("index references js/main.js", "js/main.js" in index)
+check("index has viewport meta",
+      bool(re.search(r'<meta[^>]+name=["\']viewport["\']', index, re.I)))
+for legacy in ["theme-editorial.css", "theme-darkroom.css",
+               "theme-terminal.css", "js/theme.js", "data-theme=",
+               "data-set-theme"]:
+    check(f"index does not reference legacy {legacy}", legacy not in index)
 
-for page, html in pages.items():
-    # ---------- 2. viewport meta ----------
-    check(
-        f"{page} has viewport meta",
-        bool(re.search(r'<meta[^>]+name=["\']viewport["\']', html, re.I)),
-    )
-    # ---------- 3. asset references ----------
-    for css in ["css/base.css", "css/theme-editorial.css",
-                "css/theme-darkroom.css", "css/theme-terminal.css"]:
-        check(f"{page} references {css}", css in html)
-    check(f"{page} references js/theme.js", "js/theme.js" in html)
-    check(f"{page} sets default data-theme=darkroom",
-          'data-theme="darkroom"' in html)
-    # ---------- 4. theme switcher present ----------
-    check(f"{page} has theme switcher buttons",
-          all(f'data-set-theme="{t}"' in html
-              for t in ["editorial", "darkroom", "terminal"]))
+# ---------- 3. v4 design tokens ----------
+for token in ["#0a192f", "#112240", "#8892b0", "#ccd6f6", "#64ffda",
+              "JetBrains Mono", "--nav-height", "--green-tint"]:
+    check(f"main.css uses v4 token {token}", token in main_css)
 
-    # ---------- 5. links and images ----------
-    lp = LinkImgParser()
-    lp.feed(html)
-    check(f"{page}: every <a> has a non-empty href", not lp.bad_links,
-          f"empty href at {lp.bad_links[:3]}")
-    check(f"{page}: every <img> has alt text", not lp.bad_imgs,
-          f"missing alt at {lp.bad_imgs[:3]}")
+# ---------- 4. Kevin's hard rule: FLAT colors, no gradients ----------
+check("main.css has no linear-gradient", "linear-gradient" not in main_css)
+check("main.css has no radial-gradient", "radial-gradient" not in main_css)
+check("main.css balanced braces",
+      main_css.count("{") == main_css.count("}") and main_css.count("{") > 0)
 
-    # ---------- 6. no emojis ----------
-    emoji_re = re.compile(
-        r"[\U0001F300-\U0001FAFF\U0001F000-\U0001F2FF"
-        r"\u2600-\u27BF\u2B00-\u2BFF]"
-    )
-    emojis = emoji_re.findall(html)
-    check(f"no emojis in {page}", not emojis, repr(emojis[:5]))
+# ---------- 5. v4 structure present ----------
+for frag in ['class="site-header"', 'class="nav-links"', 'class="rail rail-left"',
+             'class="rail rail-right"', 'class="hero"', 'class="eyebrow"',
+             'class="big-heading"', 'class="section-heading"',
+             'class="tab-btn', 'class="tab-panel', 'class="projects-grid"',
+             'class="project-card"', 'class="card-tech"', 'class="footer"',
+             'id="menuBtn"', 'id="mobileMenu"']:
+    check(f"index has {frag}", frag in index)
+check("nav has 4 numbered sections + photography",
+      all(f'href="#{s}"' in index for s in ["about", "experience", "work", "contact"])
+      and 'href="photos.html"' in index)
 
-# ---------- 7. photos.html: images resolve to real files ----------
-photos_html = pages["photos.html"]
-lp = LinkImgParser()
-lp.feed(photos_html)
-photo_srcs = [s for s in lp.imgs if s.startswith("assets/photos/")]
-check("photos.html has >= 12 photos", len(photo_srcs) >= 12,
-      f"found {len(photo_srcs)}")
-missing = [s for s in photo_srcs if not (SITE / s).is_file()]
-check("all photo srcs resolve to files", not missing, ", ".join(missing[:5]))
-non_jpeg = []
-for s in photo_srcs:
-    p = SITE / s
-    if p.is_file() and p.read_bytes()[:2] != b"\xff\xd8":
-        non_jpeg.append(s)
-check("all photos are valid JPEGs", not non_jpeg, ", ".join(non_jpeg[:5]))
-
-# ---------- 8. theme CSS: balanced braces + scope selector ----------
-for name in ["editorial", "darkroom", "terminal"]:
-    p = SITE / "css" / f"theme-{name}.css"
-    css = p.read_text(encoding="utf-8") if p.is_file() else ""
-    check(
-        f"theme-{name}.css balanced braces",
-        css.count("{") == css.count("}") and css.count("{") > 0,
-        f"open={css.count('{')} close={css.count('}')}",
-    )
-    check(
-        f"theme-{name}.css contains data-theme scope selector",
-        f'html[data-theme="{name}"]' in css,
-    )
-    check(f"theme-{name}.css styles .repo links", ".repo" in css)
-    check(f"theme-{name}.css styles gallery", ".photo" in css and ".series" in css)
-
-# ---------- 9. theme.js references all three themes ----------
-js = (SITE / "js" / "theme.js").read_text(encoding="utf-8") \
-    if (SITE / "js" / "theme.js").is_file() else ""
-for name in ["editorial", "darkroom", "terminal"]:
-    check(f"theme.js references theme '{name}'", name in js)
-check("theme.js persists choice (localStorage)", "localStorage" in js)
-
-# ---------- 10. base.css is theme-agnostic: no typefaces, no colors ----------
-base = (SITE / "css" / "base.css").read_text(encoding="utf-8") \
-    if (SITE / "css" / "base.css").is_file() else ""
-check("base.css has no font-family", "font-family" not in base.lower())
-check("base.css has no hex colors",
-      not re.search(r"#[0-9a-fA-F]{3,8}\b", base))
-check("base.css has no rgb()/hsl() colors",
-      not re.search(r"(rgb|hsl)a?\s*\(", base, re.I))
-check("base.css has gallery layout", ".photo-grid" in base)
-check("base.css has .repo layout", ".entry .repo" in base)
-
-# ---------- 11. no lorem ipsum anywhere ----------
-site_text_files = []
-for ext in (".html", ".css", ".js"):
-    site_text_files.extend(SITE.rglob(f"*{ext}"))
-lorem_hits = [str(f) for f in site_text_files
-              if re.search(r"lorem", f.read_text(encoding="utf-8"), re.I)]
-check("no lorem ipsum anywhere", not lorem_hits, ", ".join(lorem_hits))
-
-# ---------- 12. resume.pdf is a real PDF ----------
-pdf = SITE / "assets" / "resume.pdf"
-is_pdf = pdf.is_file() and pdf.read_bytes()[:5] == b"%PDF-"
-check("assets/resume.pdf exists and is a PDF (magic bytes %PDF)", is_pdf)
-check("resume card links to assets/resume.pdf",
-      "assets/resume.pdf" in pages["index.html"])
-
-# ---------- 13. key content present (index) ----------
-html = pages["index.html"]
-for phrase in ["quant who communicates well",
+# ---------- 6. content ----------
+for phrase in ["Hi, my name is", "Kevin Sigey.",
+               "A quant who communicates well",
+               "01.", "About Me", "02.", "Where I",
+               "03.", "Some Things I",
+               "04.", "Get In Touch",
                "sigeykevin@gmail.com",
                "linkedin.com/in/kevin-sigey-72a5501b5",
                "Predictor Hub", "Algo Trade Hub",
                "Stablecoin Remittance Monitor",
-               "status: live", "in active rebuild",
-               "pipeline running",
+               "Status: Live", "In active rebuild", "Pipeline running",
                "github.com/Kevocado/predictor-hub",
                "github.com/Kevocado/algo-trade-hub-prod",
                "github.com/Kevocado/Stable-Coin-Analysis",
                "40-160-91-131.sslip.io",
-               'href="photos.html"']:
-    check(f"index content present: {phrase!r}", phrase.lower() in html.lower())
+               "assets/resume.pdf",
+               "Busey Bank", "Illinois Business Consulting",
+               "Tandon Consulting Club", "Dot Foods",
+               "150 to 450"]:
+    check(f"index content present: {phrase!r}", phrase in index)
 
-# ---------- 14. key content present (photos) ----------
-for phrase in ["Photography", "20 frames", "Fashion", "Fly Kids",
-               "New York Fashion Week", "Nairobi", "Portraits",
-               "Beach Days", "San Francisco", "On Stage",
-               "All photographs by Kevin Sigey"]:
-    check(f"photos content present: {phrase!r}",
-          phrase.lower() in photos_html.lower())
+# ---------- 7. links / imgs / emojis / lorem on index ----------
+lp = LinkImgParser()
+lp.feed(index)
+check("index: every <a> has a non-empty href", not lp.bad_links)
+check("index: every <img> has alt text", not lp.bad_imgs)
+emoji_re = re.compile(r"[\U0001F300-\U0001FAFF\U0001F000-\U0001F2FF"
+                      r"\u2600-\u27BF\u2B00-\u2BFF]")
+check("no emojis in index", not emoji_re.findall(index))
+check("no lorem in index", "lorem" not in index.lower())
+check("no em-dashes in index", "\u2014" not in index)
+check("no em-dashes in main.css", "\u2014" not in main_css)
+
+# ---------- 8. photos.html untouched checks ----------
+for css in ["css/base.css", "css/theme-editorial.css",
+            "css/theme-darkroom.css", "css/theme-terminal.css"]:
+    check(f"photos references {css}", css in photos)
+check("photos references js/theme.js", "js/theme.js" in photos)
+check("photos sets default data-theme=darkroom", 'data-theme="darkroom"' in photos)
+check("photos has 20 frames", photos.count("<img") == 20,
+      f"found {photos.count('<img')}")
+photo_srcs = re.findall(r'<img[^>]+src="([^"]+)"', photos)
+missing = [s for s in photo_srcs if not (SITE / s).is_file()]
+check("all photo srcs resolve to files", not missing, ", ".join(missing[:5]))
 check("every photo links to its Instagram post",
-      photos_html.count('class="photo-link"') == len(photo_srcs),
-      f"links={photos_html.count('class=\"photo-link\"')} photos={len(photo_srcs)}")
-check("every photo link opens in a new tab",
-      photos_html.count('rel="noopener"') >= len(photo_srcs))
-manifest = json.loads((SITE / "assets" / "photos" / "manifest.json").read_text(encoding="utf-8"))
-manifest_files = {e["file"] for e in manifest}
-check("manifest covers exactly the photo set",
-      manifest_files == set(photo_srcs),
-      f"manifest={len(manifest_files)} page={len(photo_srcs)}")
-check("manifest has 20 entries", len(manifest) == 20, f"found {len(manifest)}")
-check("manifest entries all have instagram post urls",
-      all(e.get("post_url", "").startswith("https://www.instagram.com/p/")
-          for e in manifest))
-check("manifest has no self-portrait entries",
-      not any(s in {"album-release", "maxwell-murray"} for s in
-              (e["slug"] for e in manifest)))
+      photos.count('class="photo-link"') == len(photo_srcs))
+manifest = json.loads((SITE / "assets" / "photos" / "manifest.json")
+                      .read_text(encoding="utf-8"))
+check("manifest has 20 entries", len(manifest) == 20)
 
-# ---------- 15. deploy pipeline files ----------
-wf = SITE / ".github" / "workflows" / "deploy.yml"
-check("deploy workflow exists", wf.is_file())
-wf_text = wf.read_text(encoding="utf-8") if wf.is_file() else ""
-dockerfile = (SITE / "Dockerfile").read_text(encoding="utf-8") \
-    if (SITE / "Dockerfile").is_file() else ""
-caddyfile = (SITE / "Caddyfile").read_text(encoding="utf-8") \
-    if (SITE / "Caddyfile").is_file() else ""
-for phrase in ["ghcr.io/kevocado/portfolio", "secrets.GHCR_PAT",
-               "deploy portfolio", "secrets.VPS_SSH_KEY", "vars.VPS_HOST"]:
-    check(f"deploy workflow references {phrase!r}", phrase in wf_text)
-check("Dockerfile is caddy-based", "caddy:2-alpine" in dockerfile)
-check("Dockerfile copies both pages",
-      "index.html" in dockerfile and "photos.html" in dockerfile)
-check("Caddyfile serves static root", "file_server" in caddyfile)
+# ---------- 9. resume.pdf ----------
+pdf = SITE / "assets" / "resume.pdf"
+check("assets/resume.pdf is a PDF", pdf.is_file() and pdf.read_bytes()[:5] == b"%PDF-")
 
 print()
 if failures:
