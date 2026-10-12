@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """TDD checks for Kevin Sigey's portfolio site (~/workspace/portfolio-site/site/).
 
-Landing page rebuilt in Brittany Chiang v4 design language (static, flat colors).
-photos.html keeps the legacy theme system untouched.
+Landing page and photography page in Brittany Chiang v4 design language
+(static, flat colors, no gradients).
 """
 import re
 import sys
@@ -44,8 +44,8 @@ main_css = (SITE / "css" / "main.css").read_text(encoding="utf-8")
 main_js = (SITE / "js" / "main.js").read_text(encoding="utf-8")
 
 # ---------- 1. files ----------
-for rel in ["index.html", "photos.html", "css/main.css", "js/main.js",
-            "assets/resume.pdf"]:
+for rel in ["index.html", "photos.html", "css/main.css", "css/photos.css",
+            "js/main.js", "assets/resume.pdf"]:
     check(f"file exists: {rel}", (SITE / rel).is_file())
 
 # ---------- 2. index references new assets only ----------
@@ -114,24 +114,72 @@ check("no lorem in index", "lorem" not in index.lower())
 check("no em-dashes in index", "\u2014" not in index)
 check("no em-dashes in main.css", "\u2014" not in main_css)
 
-# ---------- 8. photos.html untouched checks ----------
-for css in ["css/base.css", "css/theme-editorial.css",
-            "css/theme-darkroom.css", "css/theme-terminal.css"]:
+# ---------- 8. photos.html: v4 styling, no legacy theme system ----------
+for css in ["css/main.css", "css/photos.css"]:
     check(f"photos references {css}", css in photos)
-check("photos references js/theme.js", "js/theme.js" in photos)
-check("photos sets default data-theme=darkroom", 'data-theme="darkroom"' in photos)
-check("photos has 20 frames", photos.count("<img") == 20,
-      f"found {photos.count('<img')}")
-photo_srcs = re.findall(r'<img[^>]+src="([^"]+)"', photos)
-missing = [s for s in photo_srcs if not (SITE / s).is_file()]
-check("all photo srcs resolve to files", not missing, ", ".join(missing[:5]))
-check("every photo links to its Instagram post",
-      photos.count('class="photo-link"') == len(photo_srcs))
+for legacy in ["theme-editorial.css", "theme-darkroom.css",
+               "theme-terminal.css", "js/theme.js", "data-theme=",
+               "data-set-theme", "ksigey-edition"]:
+    check(f"photos does not reference legacy {legacy}", legacy not in photos)
+check("photos has viewport meta",
+      bool(re.search(r'<meta[^>]+name=["\']viewport["\']', photos, re.I)))
+
+# ---------- 9. photos.html: three categories only ----------
+for cat in ["Fashion", "Editorial", "Portrait"]:
+    check(f"photos has category section: {cat}",
+          f'aria-label="{cat}"' in photos)
+for gone in ["San Francisco", "san-francisco", "Fly Kids Community",
+             "Beach Days", "On Stage", "Nairobi Editorial"]:
+    check(f"photos has no legacy series {gone!r}", gone not in photos)
+
+# ---------- 10. photos.html: manifest parity + IG-link coverage ----------
 manifest = json.loads((SITE / "assets" / "photos" / "manifest.json")
                       .read_text(encoding="utf-8"))
-check("manifest has 20 entries", len(manifest) == 20)
+check("manifest has 33 shoots", len(manifest) == 33,
+      f"found {len(manifest)}")
+cats = {m["category"] for m in manifest}
+check("manifest categories are exactly Fashion/Editorial/Portrait",
+      cats == {"Fashion", "Editorial", "Portrait"}, str(cats))
+check("manifest has 3 featured shoots",
+      sum(1 for m in manifest if m.get("featured")) == 3)
 
-# ---------- 9. resume.pdf ----------
+photo_srcs = re.findall(r'<img[^>]+src="([^"]+)"', photos)
+manifest_files = [f for m in manifest for f in m["files"]]
+check("every manifest file appears as an <img> src",
+      set(manifest_files) <= set(photo_srcs),
+      str(set(manifest_files) - set(photo_srcs))[:200])
+check("every <img> src is in the manifest",
+      set(photo_srcs) <= set(manifest_files),
+      str(set(photo_srcs) - set(manifest_files))[:200])
+missing = [s for s in manifest_files if not (SITE / s).is_file()]
+check("all manifest files exist on disk", not missing, ", ".join(missing[:5]))
+check("147 photos total", len(manifest_files) == 147,
+      f"found {len(manifest_files)}")
+
+ig_links = re.findall(r'href="(https://www\.instagram\.com/p/[^"]+)"', photos)
+check("every shoot links to its IG post",
+      len(ig_links) >= 2 * len(manifest),  # title link + frame links per shoot
+      f"found {len(ig_links)} IG links for {len(manifest)} shoots")
+for m in manifest:
+    check(f"IG link present for {m['slug']}", m["post_url"] in photos)
+    check(f"IG links open in new tab for {m['slug']}",
+          f'href="{m["post_url"]}" target="_blank" rel="noopener"' in photos)
+
+# ---------- 11. photos.html: hygiene ----------
+pp = LinkImgParser()
+pp.feed(photos)
+check("photos: every <a> has a non-empty href", not pp.bad_links)
+check("photos: every <img> has alt text", not pp.bad_imgs)
+check("no emojis in photos", not emoji_re.findall(photos))
+check("no lorem in photos", "lorem" not in photos.lower())
+check("no em-dashes in photos", "\u2014" not in photos)
+check("no em-dashes in photos.css",
+      "\u2014" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8"))
+check("photos.css has no gradients",
+      "linear-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8")
+      and "radial-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8"))
+
+# ---------- 12. resume.pdf ----------
 pdf = SITE / "assets" / "resume.pdf"
 check("assets/resume.pdf is a PDF", pdf.is_file() and pdf.read_bytes()[:5] == b"%PDF-")
 

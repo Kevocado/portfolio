@@ -1,0 +1,101 @@
+/* Photography page - Brittany Chiang v4 tokens. Flat colors only, no gradients. */
+
+.shoot {
+  margin-bottom: 64px;
+}
+
+.shoot:last-child {
+  margin-bottom: 0;
+}
+
+.shoot-title {
+  font-size: var(--fz-xl);
+  font-weight: 600;
+  color: var(--lightest-slate);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.shoot-title a {
+  transition: var(--transition);
+}
+
+.shoot-title a:hover {
+  color: var(--green);
+}
+
+.ig-tag {
+  font-family: var(--font-mono);
+  font-size: var(--fz-xs);
+  color: var(--green);
+  border: 1px solid var(--green);
+  border-radius: var(--border-radius);
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.frames {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.frame {
+  display: block;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background: var(--light-navy);
+  transition: var(--transition);
+}
+
+.frame img {
+  display: block;
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.frame:hover img {
+  transform: scale(1.03);
+}
+
+.frame:hover {
+  box-shadow: 0 10px 30px -10px var(--navy-shadow);
+}
+
+/* Featured shoots get a wider, taller treatment */
+#featured .frames {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+#featured .frame img {
+  height: 340px;
+}
+
+#featured .shoot {
+  background: var(--light-navy);
+  border-radius: var(--border-radius);
+  padding: 28px;
+}
+
+@media (max-width: 768px) {
+  .frame img {
+    height: 220px;
+  }
+
+  #featured .frame img {
+    height: 260px;
+  }
+
+  #featured .shoot {
+    padding: 20px;
+  }
+
+  .shoot {
+    margin-bottom: 48px;
+  }
+}
