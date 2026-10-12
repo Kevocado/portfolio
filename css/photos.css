@@ -180,6 +180,112 @@
 
 
 
+/* ---------- Album popup ---------- */
+.album-pop {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(12, 12, 14, 0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.album-pop[hidden] {
+  display: none;
+}
+
+.album-pop-box {
+  position: relative;
+  background: var(--light-navy);
+  border-radius: var(--border-radius);
+  padding: 32px;
+  max-width: 960px;
+  width: 100%;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.album-pop-title {
+  font-size: var(--fz-xl);
+  font-weight: 600;
+  color: var(--lightest-slate);
+  margin: 0 48px 8px 0;
+}
+
+.album-pop-ig {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--fz-xs);
+  color: var(--green);
+  border: 1px solid var(--green);
+  border-radius: var(--border-radius);
+  padding: 6px 12px;
+  margin-bottom: 20px;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.album-pop-ig:hover {
+  background: var(--green-tint);
+}
+
+.album-pop-frames {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.pop-frame {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: zoom-in;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.pop-frame img {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.pop-frame:hover img {
+  transform: scale(1.03);
+}
+
+.album-pop-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: var(--light-navy);
+  border: 1px solid var(--lightest-navy);
+  color: var(--lightest-slate);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.album-pop-close svg {
+  width: 20px;
+  height: 20px;
+}
+
+.album-pop-close:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
 /* ---------- Lightbox ---------- */
 .lightbox {
   position: fixed;
