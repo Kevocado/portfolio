@@ -1,7 +1,8 @@
 /* Photography page interactions: featured reel (auto-scroll + manual
-   arrows/drag) and the on-site lightbox. Shoot cards open the viewer scoped
-   to that shoot, right where they are. Photos never navigate away; the only
-   Instagram exits are explicit "View full post on Instagram" links. */
+   arrows/drag), album popup overview, and the on-site lightbox. Shoot cards
+   open a popup with the whole shoot; picking a frame opens the individual
+   lightbox view. Photos never navigate away; the only Instagram exits are
+   explicit "View full post on Instagram" links. */
 (function () {
   'use strict';
 
@@ -142,9 +143,56 @@
     highlight();
   }
 
+  /* ---------- Album popup: whole-shoot overview first ----------
+     A card opens a popup with every frame of the shoot in place; picking
+     one frame opens the individual lightbox view. */
+  var pop = document.getElementById('albumPop');
+  var popTitle = document.getElementById('albumPopTitle');
+  var popIg = document.getElementById('albumPopIg');
+  var popFrames = document.getElementById('albumPopFrames');
+  var popClose = document.getElementById('albumPopClose');
+  var popReturnFocus = null;
+
+  function openAlbum(slug) {
+    var info = shootIndex[slug];
+    if (!info) { return; }
+    LIST = ITEMS.slice(info.start, info.start + info.count);
+    popTitle.textContent = info.title;
+    popIg.href = info.post;
+    popIg.setAttribute('aria-label', 'View ' + info.title + ' on Instagram');
+    popFrames.innerHTML = '';
+    LIST.forEach(function (it, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'pop-frame';
+      b.setAttribute('data-pidx', String(i));
+      b.setAttribute('aria-label',
+        'View photo ' + (i + 1) + ' of ' + LIST.length +
+        ' from ' + info.title);
+      var img = document.createElement('img');
+      img.src = it.src;
+      img.alt = it.alt;
+      img.loading = 'lazy';
+      b.appendChild(img);
+      popFrames.appendChild(b);
+    });
+    pop.hidden = false;
+    document.body.style.overflow = 'hidden';
+    popReturnFocus = document.activeElement;
+    popClose.focus();
+  }
+  function closeAlbum() {
+    pop.hidden = true;
+    if (lb.hidden) { document.body.style.overflow = ''; }
+    if (popReturnFocus && popReturnFocus.focus) { popReturnFocus.focus(); }
+  }
+  popClose.addEventListener('click', closeAlbum);
+  pop.addEventListener('click', function (e) {
+    if (e.target === pop) { closeAlbum(); }
+  });
+
   /* ---------- Lightbox ----------
-     Reel items browse every photo; a shoot card opens the viewer scoped to
-     just that shoot, in place: nothing scrolls to the bottom of the group. */
+     Reel items browse every photo; popup frames browse just their shoot. */
   var lb = document.getElementById('lightbox');
   var lbImg = document.getElementById('lbImg');
   var lbTitle = document.getElementById('lbTitle');
@@ -187,18 +235,18 @@
 
   document.addEventListener('click', function (e) {
     if (!lb.hidden) { return; }
+    if (!pop.hidden) {
+      var f = e.target.closest('[data-pidx]');
+      if (f) { openLb(LIST, parseInt(f.getAttribute('data-pidx'), 10)); }
+      return;
+    }
     var t = e.target.closest('[data-idx]');
     if (t) {
       openLb(ITEMS, parseInt(t.getAttribute('data-idx'), 10));
       return;
     }
     var card = e.target.closest('.shoot-card');
-    if (card) {
-      var info = shootIndex[card.getAttribute('data-shoot')];
-      if (info) {
-        openLb(ITEMS.slice(info.start, info.start + info.count), 0);
-      }
-    }
+    if (card) { openAlbum(card.getAttribute('data-shoot')); }
   });
   lbClose.addEventListener('click', closeLb);
   lbPrev.addEventListener('click', function () { step(-1); });
@@ -207,9 +255,12 @@
     if (e.target === lb) { closeLb(); }
   });
   document.addEventListener('keydown', function (e) {
-    if (lb.hidden) { return; }
-    if (e.key === 'Escape') { closeLb(); }
-    else if (e.key === 'ArrowLeft') { step(-1); }
-    else if (e.key === 'ArrowRight') { step(1); }
+    if (!lb.hidden) {
+      if (e.key === 'Escape') { closeLb(); }
+      else if (e.key === 'ArrowLeft') { step(-1); }
+      else if (e.key === 'ArrowRight') { step(1); }
+      return;
+    }
+    if (!pop.hidden && e.key === 'Escape') { closeAlbum(); }
   });
 })();
