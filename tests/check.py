@@ -7,6 +7,7 @@ Covers both index.html and photos.html.
 """
 import re
 import sys
+import json
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -71,8 +72,8 @@ for page, html in pages.items():
                 "css/theme-darkroom.css", "css/theme-terminal.css"]:
         check(f"{page} references {css}", css in html)
     check(f"{page} references js/theme.js", "js/theme.js" in html)
-    check(f"{page} sets default data-theme=editorial",
-          'data-theme="editorial"' in html)
+    check(f"{page} sets default data-theme=darkroom",
+          'data-theme="darkroom"' in html)
     # ---------- 4. theme switcher present ----------
     check(f"{page} has theme switcher buttons",
           all(f'data-set-theme="{t}"' in html
@@ -176,11 +177,29 @@ for phrase in ["quant who communicates well",
     check(f"index content present: {phrase!r}", phrase.lower() in html.lower())
 
 # ---------- 14. key content present (photos) ----------
-for phrase in ["Photography", "17 frames", "Fashion", "Portraits",
-               "Editorial", "Events", "Beach", "City",
+for phrase in ["Photography", "20 frames", "Fashion", "Fly Kids",
+               "New York Fashion Week", "Nairobi", "Portraits",
+               "Beach Days", "San Francisco", "On Stage",
                "All photographs by Kevin Sigey"]:
     check(f"photos content present: {phrase!r}",
           phrase.lower() in photos_html.lower())
+check("every photo links to its Instagram post",
+      photos_html.count('class="photo-link"') == len(photo_srcs),
+      f"links={photos_html.count('class=\"photo-link\"')} photos={len(photo_srcs)}")
+check("every photo link opens in a new tab",
+      photos_html.count('rel="noopener"') >= len(photo_srcs))
+manifest = json.loads((SITE / "assets" / "photos" / "manifest.json").read_text(encoding="utf-8"))
+manifest_files = {e["file"] for e in manifest}
+check("manifest covers exactly the photo set",
+      manifest_files == set(photo_srcs),
+      f"manifest={len(manifest_files)} page={len(photo_srcs)}")
+check("manifest has 20 entries", len(manifest) == 20, f"found {len(manifest)}")
+check("manifest entries all have instagram post urls",
+      all(e.get("post_url", "").startswith("https://www.instagram.com/p/")
+          for e in manifest))
+check("manifest has no self-portrait entries",
+      not any(s in {"album-release", "maxwell-murray"} for s in
+              (e["slug"] for e in manifest)))
 
 # ---------- 15. deploy pipeline files ----------
 wf = SITE / ".github" / "workflows" / "deploy.yml"
