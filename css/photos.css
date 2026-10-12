@@ -16,7 +16,7 @@
   -ms-overflow-style: none;
   cursor: grab;
   padding: 12px 0;
-  box-shadow: inset 70px 0 50px -50px #0a192f, inset -70px 0 50px -50px #0a192f;
+  box-shadow: inset 70px 0 50px -50px #0c0c0e, inset -70px 0 50px -50px #0c0c0e;
 }
 
 .reel::-webkit-scrollbar {

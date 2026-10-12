@@ -135,33 +135,34 @@ for gone in ["San Francisco", "san-francisco", "Fly Kids Community",
 # ---------- 10. photos.html: manifest parity (files are {src, post}) ----------
 manifest = json.loads((SITE / "assets" / "photos" / "manifest.json")
                       .read_text(encoding="utf-8"))
-check("manifest has >= 29 shoots", len(manifest) >= 29,
+check("manifest has >= 74 shoots", len(manifest) >= 74,
       f"found {len(manifest)}")
 cats = {m["category"] for m in manifest}
 check("manifest categories are exactly Fashion/Editorial/Portrait",
       cats == {"Fashion", "Editorial", "Portrait"}, str(cats))
 check("manifest has 3 featured shoots",
       sum(1 for m in manifest if m.get("featured")) == 3)
-check("no single-photo shoots",
-      all(len(m["files"]) >= 2 for m in manifest),
-      str([m["slug"] for m in manifest if len(m["files"]) < 2]))
-# per-shoot counts must never shrink vs the 2026-10-12 150-photo baseline
-PREV_COUNTS = {
-    "cole-pearl-jacket": 5, "yuna-seki-spring": 5, "daily-paper-nyfw": 5,
-    "midnight-runway": 5, "enwhy-eclaires": 5, "yorisport-f23": 4,
-    "cole-pearl-jacket-b": 5, "model-shoots": 6, "blocking-out-the-sun": 6,
-    "just-business": 5, "flykids-events": 4, "runway7-nyfw": 5,
-    "shoot-for-the-stars": 5, "fair-blue": 5, "emerald-bliss": 5,
-    "nyfw-favorites": 5, "runway7-fw": 5, "enchanted-forests": 6,
-    "primadonna-zine": 5, "earl-doechii": 5, "match-my-freak": 5,
-    "love-space-time": 5, "vulnerability": 5, "grad-shoots": 6,
-    "fw-portraits": 5, "flykids-y2k-portraits": 6, "sierrayne-birthday": 6,
-    "midnight-in-white": 5, "beach-shoot": 6,
-}
-shrunk = [(m["slug"], len(m["files"]), PREV_COUNTS[m["slug"]])
-          for m in manifest if m["slug"] in PREV_COUNTS
-          and len(m["files"]) < PREV_COUNTS[m["slug"]]]
-check("no shoot lost photos vs baseline", not shrunk, str(shrunk)[:200])
+# HARD RULE (Kevin, 2026-10-12): one shoot/collection = exactly ONE
+# Instagram post. Every photo in a shoot must share one post URL, and the
+# shoot-level post_url must be that same post. Fail loudly otherwise.
+one_post_violations = [
+    m["slug"] for m in manifest
+    if len({f["post"] for f in m["files"]}) != 1
+]
+check("one post per shoot (hard rule)", not one_post_violations,
+      str(one_post_violations)[:200])
+post_url_mismatch = [
+    m["slug"] for m in manifest
+    if m.get("post_url") not in {f["post"] for f in m["files"]}
+]
+check("shoot post_url matches its files' shared post", not post_url_mismatch,
+      str(post_url_mismatch)[:200])
+# no post may lose photos vs the 2026-10-12 one-post-per-shoot baseline
+# (188 photos); splits move photos between shoots, never drop them
+BASELINE_TOTAL_PHOTOS = 188
+total_photos = sum(len(m["files"]) for m in manifest)
+check("no photos dropped vs baseline", total_photos >= BASELINE_TOTAL_PHOTOS,
+      f"found {total_photos}")
 check("manifest files are {src, post} objects",
       all(isinstance(f, dict) and "src" in f and "post" in f
           for m in manifest for f in m["files"]))
@@ -302,6 +303,11 @@ for label, text in [("photos", photos), ("photos.css", (SITE / "css" / "photos.c
 check("photos.css has no gradients",
       "linear-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8")
       and "radial-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8"))
+# near-black palette (Kevin, 2026-10-12): no navy blues on the photos page
+photos_css = (SITE / "css" / "photos.css").read_text(encoding="utf-8")
+check("photos.css has no navy blues",
+      "#0a192f" not in photos_css.lower() and "#112240" not in photos_css.lower(),
+      "found navy hex in photos.css")
 
 # ---------- 12. resume.pdf ----------
 pdf = SITE / "assets" / "resume.pdf"
