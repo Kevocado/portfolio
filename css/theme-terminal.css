@@ -1,0 +1,148 @@
+/* theme-terminal.css — the engineering direction: near-black, blueprint dot grid,
+   monospace-forward, green/amber terminal accents, blinking cursor.
+   Scoped under html[data-theme="terminal"]. Owns all color, type, texture. */
+
+html[data-theme="terminal"]{
+  --bg:#060806;
+  --panel:#0b0e0b;
+  --ink:#d7e0d7;
+  --muted:#7d8a7d;
+  --faint:#454f45;
+  --green:#3dff7a;
+  --amber:#ffb02e;
+  --line:#1d241d;
+  --grid-dot:#141a14;
+}
+
+html[data-theme="terminal"] body{
+  background-color:var(--bg);
+  background-image:radial-gradient(circle, var(--grid-dot) 1px, transparent 1px);
+  background-size:28px 28px;
+  color:var(--ink);
+  font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,monospace;
+  font-size:15px;
+}
+
+html[data-theme="terminal"] ::selection{background:var(--green);color:#060806}
+
+/* masthead as terminal chrome */
+html[data-theme="terminal"] .masthead{
+  border-bottom-color:var(--line);
+  border-bottom-style:solid;border-bottom-width:1px;
+  text-align:left;
+}
+html[data-theme="terminal"] .masthead .wrap{
+  border:1px solid var(--line);border-radius:10px;background:rgba(11,14,11,.92);
+  margin-top:20px;padding-top:14px;padding-bottom:14px;
+}
+html[data-theme="terminal"] .dateline{display:none}
+html[data-theme="terminal"] .nameplate{font-size:16px;font-weight:700;letter-spacing:0;margin:0}
+html[data-theme="terminal"] .nameplate::before{content:"kevin@sigey:~/landing$ ";color:var(--green)}
+html[data-theme="terminal"] .nameplate em{font-style:normal;color:var(--green)}
+
+/* nav */
+html[data-theme="terminal"] .nav{border-bottom-color:var(--line)}
+html[data-theme="terminal"] .nav-inner{
+  justify-content:flex-end;gap:26px;font-size:13.5px;
+  letter-spacing:0;text-transform:none;color:var(--muted);
+}
+html[data-theme="terminal"] .nav-inner a::before{content:"./";color:var(--faint)}
+html[data-theme="terminal"] .nav-inner a:hover{color:var(--green)}
+html[data-theme="terminal"] .ext::after{content:" ↗";font-size:11px;color:var(--faint)}
+
+/* cover */
+html[data-theme="terminal"] .kicker{font-size:14px;letter-spacing:0;text-transform:none;color:var(--muted);margin-bottom:18px}
+html[data-theme="terminal"] .kicker::before{content:"$ ";color:var(--green)}
+html[data-theme="terminal"] .headline{font-weight:800;font-size:clamp(30px,5vw,52px);line-height:1.15}
+html[data-theme="terminal"] .headline em{font-style:normal;color:var(--green)}
+html[data-theme="terminal"] .headline::after{
+  content:"";display:inline-block;width:.55em;height:1.05em;background:var(--green);
+  vertical-align:-.12em;margin-left:6px;animation:tblink 1.1s steps(1) infinite;
+}
+@keyframes tblink{50%{opacity:0}}
+html[data-theme="terminal"] .standfirst{color:var(--muted);font-size:15px}
+html[data-theme="terminal"] .byline{border-top-color:var(--line);border-top-style:dashed;color:var(--faint);font-size:12.5px}
+html[data-theme="terminal"] .pullquote{border-left-color:var(--green);border-left-width:2px}
+html[data-theme="terminal"] .pullquote blockquote{font-size:16px;color:var(--ink)}
+html[data-theme="terminal"] .pullquote cite{color:var(--muted)}
+
+/* sections */
+html[data-theme="terminal"] .doors-section,
+html[data-theme="terminal"] .work{border-top-color:var(--line);border-top-style:dashed}
+html[data-theme="terminal"] .agentic{
+  border-top-color:var(--line);border-top-style:dashed;
+  border-bottom-color:var(--line);border-bottom-style:dashed;
+  background:rgba(11,14,11,.6);
+}
+html[data-theme="terminal"] .sec-no{font-size:13px;letter-spacing:.1em;color:var(--faint)}
+html[data-theme="terminal"] .sec-no::before{content:"[";color:var(--green)}
+html[data-theme="terminal"] .sec-no::after{content:"]";color:var(--green)}
+html[data-theme="terminal"] .sec-title{font-size:22px;font-weight:800}
+html[data-theme="terminal"] .sec-title::before{content:"// ";color:var(--faint)}
+html[data-theme="terminal"] .sec-sub{color:var(--muted);font-size:14px}
+
+/* doors */
+html[data-theme="terminal"] .doors{border-color:transparent;gap:16px}
+html[data-theme="terminal"] .door{background:var(--panel);border-color:var(--line);border-radius:8px}
+html[data-theme="terminal"] .door + .door{border-left-color:var(--line)}
+html[data-theme="terminal"] .door:hover{border-color:var(--green);transform:translateY(-3px)}
+html[data-theme="terminal"] .door:nth-child(2):hover{border-color:var(--amber)}
+html[data-theme="terminal"] .door .folio{color:var(--faint);font-size:12px;letter-spacing:.08em}
+html[data-theme="terminal"] .door h3{font-size:22px;font-weight:800}
+html[data-theme="terminal"] .door h3 em{font-style:normal;color:var(--green)}
+html[data-theme="terminal"] .door p{color:var(--muted);font-size:13.5px}
+html[data-theme="terminal"] .door .cta{color:var(--green);font-size:13px}
+html[data-theme="terminal"] .door:nth-child(2) .cta{color:var(--amber)}
+
+/* agentic modules */
+html[data-theme="terminal"] .ledger{border-color:transparent;gap:16px}
+html[data-theme="terminal"] .entry{background:var(--panel);border-color:var(--line);border-radius:8px}
+html[data-theme="terminal"] .entry + .entry{border-left-color:var(--line)}
+html[data-theme="terminal"] .entry .desk{color:var(--faint);font-size:11.5px}
+html[data-theme="terminal"] .entry h3{font-size:17px;font-weight:800}
+html[data-theme="terminal"] .entry p{color:var(--muted);font-size:13px}
+html[data-theme="terminal"] .entry .standing{
+  border-top-color:var(--line);border-top-style:dashed;
+  font-style:normal;font-size:12.5px;color:var(--muted);
+}
+html[data-theme="terminal"] .entry .dot{border-radius:0;background:var(--green)}
+html[data-theme="terminal"] .entry:nth-child(2) .dot{background:var(--amber)}
+
+/* work log */
+html[data-theme="terminal"] .index{border-top-color:var(--line);border-top-width:1px;border-top-style:solid;border-radius:8px;overflow:hidden;background:var(--panel)}
+html[data-theme="terminal"] .index-row{border-bottom-color:var(--line);padding:20px 24px}
+html[data-theme="terminal"] .index-row .date{color:var(--faint);font-size:12.5px}
+html[data-theme="terminal"] .index-row h3{font-size:15.5px;font-weight:700}
+html[data-theme="terminal"] .index-row h3 .role{color:var(--muted);font-weight:400;font-size:13.5px}
+html[data-theme="terminal"] .index-row p{color:var(--muted);font-size:13px}
+
+/* colophon */
+html[data-theme="terminal"] .colophon{border-top-width:1px;border-top-style:dashed;border-top-color:var(--line)}
+html[data-theme="terminal"] .colophon .sec-title::before{content:"// ";color:var(--faint)}
+html[data-theme="terminal"] .contact-lede{color:var(--muted);font-size:14px}
+html[data-theme="terminal"] .ccard{border-color:var(--line);background:var(--panel);border-radius:8px}
+html[data-theme="terminal"] .ccard:hover{border-color:var(--green)}
+html[data-theme="terminal"] .ccard .k{color:var(--faint);font-size:11px}
+html[data-theme="terminal"] .ccard .v{color:var(--green);font-weight:700}
+html[data-theme="terminal"] .theme-switcher{color:var(--muted);font-size:12.5px}
+html[data-theme="terminal"] .theme-switcher .ts-label::before{content:"$ ";color:var(--green)}
+html[data-theme="terminal"] .theme-switcher button{border-color:var(--line);color:var(--ink)}
+html[data-theme="terminal"] .theme-switcher button[aria-pressed="true"]{border-color:var(--green);color:var(--green)}
+html[data-theme="terminal"] .colophon-foot{border-top-color:var(--line);border-top-style:solid;color:var(--faint);font-size:12.5px}
+
+/* repo links */
+html[data-theme="terminal"] .entry .repo a{color:var(--green);font-size:12.5px}
+html[data-theme="terminal"] .entry .repo a::before{content:"$ ";color:var(--faint)}
+
+/* gallery */
+html[data-theme="terminal"] .gallery-lede{color:var(--muted);font-size:14px}
+html[data-theme="terminal"] .series{border-top-color:var(--line);border-top-style:dashed}
+html[data-theme="terminal"] .series-no{font-size:13px;color:var(--faint)}
+html[data-theme="terminal"] .series-no::before{content:"[";color:var(--green)}
+html[data-theme="terminal"] .series-no::after{content:"]";color:var(--green)}
+html[data-theme="terminal"] .series-title{font-size:20px;font-weight:800}
+html[data-theme="terminal"] .series-title::before{content:"// ";color:var(--faint)}
+html[data-theme="terminal"] .series-sub{color:var(--muted);font-size:13.5px}
+html[data-theme="terminal"] .photo img{border:1px solid var(--line);border-radius:8px}
+html[data-theme="terminal"] .photo figcaption .cap-title{color:var(--ink);font-weight:700;font-size:13.5px}
+html[data-theme="terminal"] .photo figcaption .cap-meta{color:var(--faint);font-size:12px}
