@@ -1,0 +1,115 @@
+/* theme-editorial.css — the "Kevin Sigey Review" print-magazine direction.
+   Scoped under html[data-theme="editorial"]. Owns all color, type, texture. */
+
+html[data-theme="editorial"]{
+  --paper:#faf7f0;
+  --paper2:#f3eee2;
+  --ink:#1c1a16;
+  --muted:#6f6a5e;
+  --faint:#a09a8a;
+  --rule:#d9d2c0;
+  --accent:#9c3a2b;
+  --card-dark:#24221d;
+  --card-line:#3a372f;
+  --foot-dim:#8a8474;
+  --colophon-p:#b9b2a2;
+}
+
+html[data-theme="editorial"] body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+}
+
+html[data-theme="editorial"] ::selection{background:var(--accent);color:var(--paper)}
+
+/* masthead */
+html[data-theme="editorial"] .masthead{border-bottom-color:var(--ink)}
+html[data-theme="editorial"] .dateline{color:var(--muted)}
+html[data-theme="editorial"] .nameplate{font-family:'Fraunces',Georgia,serif;font-weight:700}
+html[data-theme="editorial"] .nameplate em{color:var(--accent)}
+
+/* nav */
+html[data-theme="editorial"] .nav{border-bottom-color:var(--rule)}
+html[data-theme="editorial"] .nav-inner{color:var(--muted)}
+html[data-theme="editorial"] .nav-inner a{font-weight:500;transition:color .2s}
+html[data-theme="editorial"] .nav-inner a:hover{color:var(--accent)}
+html[data-theme="editorial"] .ext::after{content:"↗";font-size:10px;margin-left:4px}
+
+/* cover */
+html[data-theme="editorial"] .kicker{color:var(--accent);font-weight:600}
+html[data-theme="editorial"] .headline{font-family:'Fraunces',Georgia,serif;font-weight:600}
+html[data-theme="editorial"] .headline em{font-style:italic;color:var(--accent)}
+html[data-theme="editorial"] .standfirst{color:var(--muted)}
+html[data-theme="editorial"] .standfirst::first-letter{
+  font-family:'Fraunces',Georgia,serif;font-weight:600;
+  font-size:3.4em;float:left;line-height:.82;padding:4px 10px 0 0;color:var(--ink);
+}
+html[data-theme="editorial"] .byline{border-top-color:var(--rule);color:var(--faint)}
+html[data-theme="editorial"] .pullquote{border-left-color:var(--accent)}
+html[data-theme="editorial"] .pullquote blockquote{font-family:'Fraunces',Georgia,serif;font-style:italic;color:var(--ink)}
+html[data-theme="editorial"] .pullquote cite{font-family:'Inter',sans-serif;color:var(--muted)}
+
+/* sections */
+html[data-theme="editorial"] .doors-section,
+html[data-theme="editorial"] .agentic,
+html[data-theme="editorial"] .work{border-top-color:var(--rule)}
+html[data-theme="editorial"] .sec-no{font-family:'Fraunces',Georgia,serif;font-style:italic;color:var(--accent)}
+html[data-theme="editorial"] .sec-no::before{content:"§"}
+html[data-theme="editorial"] .sec-title{font-family:'Fraunces',Georgia,serif;font-weight:600}
+html[data-theme="editorial"] .sec-sub{color:var(--muted)}
+
+/* doors as magazine spreads */
+html[data-theme="editorial"] .doors{border-color:var(--rule)}
+html[data-theme="editorial"] .door + .door{border-left-color:var(--rule);border-top-color:var(--rule)}
+html[data-theme="editorial"] .door:hover{background:var(--paper2)}
+html[data-theme="editorial"] .door .folio{color:var(--faint)}
+html[data-theme="editorial"] .door h3{font-family:'Fraunces',Georgia,serif;font-weight:600}
+html[data-theme="editorial"] .door h3 em{color:var(--accent);font-style:italic}
+html[data-theme="editorial"] .door p{color:var(--muted)}
+html[data-theme="editorial"] .door .cta{color:var(--accent);font-weight:600}
+
+/* agentic ledger */
+html[data-theme="editorial"] .ledger{border-color:var(--rule)}
+html[data-theme="editorial"] .entry + .entry{border-left-color:var(--rule);border-top-color:var(--rule)}
+html[data-theme="editorial"] .entry .desk{color:var(--accent);font-weight:600}
+html[data-theme="editorial"] .entry h3{font-family:'Fraunces',Georgia,serif;font-weight:600}
+html[data-theme="editorial"] .entry p{color:var(--muted)}
+html[data-theme="editorial"] .entry .standing{border-top-color:var(--rule);color:var(--ink)}
+html[data-theme="editorial"] .entry .dot{background:var(--accent)}
+html[data-theme="editorial"] .entry:nth-child(2) .dot{background:var(--faint)}
+
+/* work index */
+html[data-theme="editorial"] .index{border-top-color:var(--ink)}
+html[data-theme="editorial"] .index-row{border-bottom-color:var(--rule)}
+html[data-theme="editorial"] .index-row .date{color:var(--faint)}
+html[data-theme="editorial"] .index-row h3{font-family:'Fraunces',Georgia,serif;font-weight:600}
+html[data-theme="editorial"] .index-row h3 .role{font-family:'Inter',sans-serif;font-weight:500;color:var(--muted)}
+html[data-theme="editorial"] .index-row p{color:var(--muted)}
+
+/* colophon */
+html[data-theme="editorial"] .colophon{background:var(--ink);color:var(--paper)}
+html[data-theme="editorial"] .colophon .sec-title{color:var(--paper)}
+html[data-theme="editorial"] .colophon .sec-no{color:var(--accent)}
+html[data-theme="editorial"] .contact-lede{color:var(--colophon-p)}
+html[data-theme="editorial"] .ccard{border-color:var(--card-line);background:var(--card-dark)}
+html[data-theme="editorial"] .ccard:hover{border-color:var(--accent)}
+html[data-theme="editorial"] .ccard .k{color:var(--foot-dim)}
+html[data-theme="editorial"] .theme-switcher{color:var(--colophon-p)}
+html[data-theme="editorial"] .theme-switcher button{border-color:var(--card-line);color:var(--paper)}
+html[data-theme="editorial"] .theme-switcher button[aria-pressed="true"]{border-color:var(--accent);color:var(--paper)}
+html[data-theme="editorial"] .colophon-foot{border-top-color:var(--card-line);color:var(--foot-dim)}
+
+/* repo links */
+html[data-theme="editorial"] .entry .repo a{color:var(--accent);font-weight:600}
+html[data-theme="editorial"] .entry .repo a:hover{text-decoration:underline}
+
+/* gallery */
+html[data-theme="editorial"] .gallery-lede{color:var(--muted)}
+html[data-theme="editorial"] .series{border-top-color:var(--rule)}
+html[data-theme="editorial"] .series-no{font-family:'Fraunces',Georgia,serif;font-style:italic;color:var(--accent)}
+html[data-theme="editorial"] .series-no::before{content:"§"}
+html[data-theme="editorial"] .series-title{font-family:'Fraunces',Georgia,serif;font-weight:600}
+html[data-theme="editorial"] .series-sub{color:var(--muted)}
+html[data-theme="editorial"] .photo figcaption .cap-title{font-family:'Fraunces',Georgia,serif;font-weight:600;color:var(--ink)}
+html[data-theme="editorial"] .photo figcaption .cap-meta{color:var(--faint)}
