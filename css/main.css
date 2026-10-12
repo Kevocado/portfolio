@@ -418,6 +418,20 @@ main {
 
 .card-desc { color: var(--light-slate); font-size: 17px; }
 
+.card-viz {
+  margin: 10px 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fz-sm);
+}
+
+.card-viz a {
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.card-viz a:hover { color: var(--lightest-slate); }
+
 .card-status {
   display: flex;
   align-items: center;
