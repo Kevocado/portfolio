@@ -116,7 +116,7 @@
   .reel { scroll-behavior: auto; }
 }
 
-/* ---------- Shoot cards + drawer ---------- */
+/* ---------- Shoot cards ---------- */
 .shoot-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -137,10 +137,6 @@
 .shoot-card:hover {
   border-color: var(--green);
   transform: translateY(-4px);
-}
-
-.shoot-card[aria-expanded="true"] {
-  border-color: var(--green);
 }
 
 .shoot-card-thumb {
@@ -182,98 +178,14 @@
   white-space: nowrap;
 }
 
-.shoot-drawer {
-  margin-top: 24px;
-  background: var(--light-navy);
-  border-radius: var(--border-radius);
-  padding: 24px;
-}
 
-.shoot-drawer[hidden] {
-  display: none;
-}
-
-.drawer-head {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.drawer-title {
-  font-size: var(--fz-xl);
-  font-weight: 600;
-  color: var(--lightest-slate);
-  margin: 0;
-}
-
-.drawer-ig {
-  font-family: var(--font-mono);
-  font-size: var(--fz-xs);
-  color: var(--green);
-  border: 1px solid var(--green);
-  border-radius: var(--border-radius);
-  padding: 6px 12px;
-  white-space: nowrap;
-  transition: var(--transition);
-}
-
-.drawer-ig:hover {
-  background: var(--green-tint);
-}
-
-.drawer-close {
-  margin-left: auto;
-  background: none;
-  border: 1px solid var(--slate);
-  color: var(--slate);
-  border-radius: var(--border-radius);
-  font-family: var(--font-mono);
-  font-size: var(--fz-xs);
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.drawer-close:hover {
-  border-color: var(--green);
-  color: var(--green);
-}
-
-.drawer-frames {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
-}
-
-.dframe {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: zoom-in;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
-
-.dframe img {
-  display: block;
-  width: 100%;
-  height: 240px;
-  object-fit: cover;
-  transition: var(--transition);
-}
-
-.dframe:hover img {
-  transform: scale(1.03);
-}
 
 /* ---------- Lightbox ---------- */
 .lightbox {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(10, 25, 47, 0.94);
+  background: rgba(12, 12, 14, 0.94);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -325,6 +237,12 @@
   background: var(--green-tint);
 }
 
+.lb-count {
+  color: var(--slate);
+  font-size: var(--fz-xs);
+  white-space: nowrap;
+}
+
 .lb-close,
 .lb-prev,
 .lb-next {
@@ -365,9 +283,7 @@
   .reel-arrow { width: 38px; height: 38px; }
   .reel-prev { left: 6px; }
   .reel-next { right: 6px; }
-  .dframe img { height: 200px; }
   .lb-prev { left: 8px; }
   .lb-next { right: 8px; }
   .lb-close { top: 12px; right: 12px; }
-  .shoot-drawer { padding: 16px; }
 }
