@@ -45,7 +45,7 @@ main_js = (SITE / "js" / "main.js").read_text(encoding="utf-8")
 
 # ---------- 1. files ----------
 for rel in ["index.html", "photos.html", "css/main.css", "css/photos.css",
-            "js/main.js", "assets/resume.pdf"]:
+            "js/main.js", "assets/resume.pdf", "assets/papers/tightness-paradox.pdf"]:
     check(f"file exists: {rel}", (SITE / rel).is_file())
 
 # ---------- 2. index references new assets only ----------
@@ -91,15 +91,23 @@ for phrase in ["Hi, my name is", "Kevin Sigey.",
                "linkedin.com/in/kevin-sigey-72a5501b5",
                "Predictor Hub", "Algo Trade Hub",
                "Stablecoin Remittance Monitor",
+               "Synchrony Guardrail Engine", "FPL Scout",
+               "Tightness Paradox", "Data-Center Energy Analysis",
                "Status: Live", "In active rebuild", "Pipeline running",
+               "Competition entry", "Status: Shipped",
+               "Status: Research paper", "Status: Interactive paper",
                "github.com/Kevocado/predictor-hub",
                "github.com/Kevocado/algo-trade-hub-prod",
                "github.com/Kevocado/Stable-Coin-Analysis",
+               "github.com/Kevocado/FPL_Optimizer",
+               "assets/papers/tightness-paradox.pdf",
+               "data-center-energy-analysis-sxg6axdjxrs2xuq",
                "40-160-91-131.sslip.io",
                "assets/resume.pdf",
                "Busey Bank", "Illinois Business Consulting",
-               "Tandon Consulting Club", "Dot Foods",
-               "150 to 450"]:
+               "Tandon Consulting Club", "Dot Foods", "WOW Payments",
+               "job-wow", "Fintech Marketing Intern",
+               "150 to 450", "100+ door-to-door"]:
     check(f"index content present: {phrase!r}", phrase in index)
 
 # ---------- 7. links / imgs / emojis / lorem on index ----------
@@ -309,9 +317,11 @@ check("photos.css has no navy blues",
       "#0a192f" not in photos_css.lower() and "#112240" not in photos_css.lower(),
       "found navy hex in photos.css")
 
-# ---------- 12. resume.pdf ----------
+# ---------- 12. resume.pdf / papers ----------
 pdf = SITE / "assets" / "resume.pdf"
 check("assets/resume.pdf is a PDF", pdf.is_file() and pdf.read_bytes()[:5] == b"%PDF-")
+tp = SITE / "assets" / "papers" / "tightness-paradox.pdf"
+check("assets/papers/tightness-paradox.pdf is a PDF", tp.is_file() and tp.read_bytes()[:5] == b"%PDF-")
 
 print()
 if failures:
