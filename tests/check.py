@@ -126,21 +126,39 @@ for frag in ['id="lab"', 'id="dotFoodsToy"',
              'class="card-signal"', 'id="palletCost"', 'id="laborRate"',
              'id="sortFee"', 'id="dropFee"', 'id="toyReset"',
              'id="toyTraditional"', 'id="toyOptimized"', 'id="toyVerdict"',
-             'href="#lab"']:
+             'href="#lab"',
+             'id="receipts"', 'class="receipts-grid"',
+             'class="receipt-card"', 'href="#dotFoodsToy"',
+             'class="receipt-bar-row"', 'class="receipt-table"']:
     check(f"index has {frag}", frag in index)
 for phrase in ["The Lab", "Try the tradeoff",
                "Snapshot, verified Oct 14, 2026",
                "6 containers on Azure", "Refreshes weekly",
                "The same judgment that frames a shot",
                "Reset to practicum placeholders",
-               "Simplified illustration. Directional, not validated."]:
+               "Simplified illustration. Directional, not validated.",
+               "Receipts", "The numbers behind the calls.",
+               "Synchrony Datathon: staffing forecasts for four client portfolios.",
+               "Abandon error by model version",
+               "Volume accuracy kept improving across the same versions.",
+               "Shipped V16, not the most accurate model",
+               "Abandon error is the metric that predicts customer pain.",
+               "Busey Bank Treasury and ALM: separate real deposit growth from internal transfers.",
+               "Proximity tiebreaker made it worse: 90% to 86%",
+               "Confirmation numbers: identical on both legs, collision-proof key.",
+               "MSBA capstone: denser truck loading for a food redistributor.",
+               "Optimized costs more under placeholder costs",
+               "Name the tradeoff, not the savings.",
+               "Try the tradeoff in the Lab",
+               "$1B+", "$0 across all five deposit categories",
+               "2+ hrs down to 6-13 min per stage",
+               "Placeholder costs, same as the toy."]:
     check(f"index content present: {phrase!r}", phrase in index)
 check("standalone snapshot strip is gone",
       'class="live-strip"' not in index)
 check("Decisions section is gone",
       'id="decisions"' not in index and 'href="#decisions"' not in index)
 for headline in ["Ship the less accurate model",
-                 "Name the tradeoff, not the savings",
                  "Fix the key, not the tiebreaker"]:
     check(f"Decisions prose gone: {headline!r}", headline not in index)
 check("tradeoff toy lives inside the Lab section",
@@ -153,6 +171,32 @@ check("Stablecoin refresh note inside its card",
       index.find('Stablecoin Remittance Monitor')
       < index.find('Refreshes weekly')
       < index.find('FPL Scout'))
+# ---------- 7c. Receipts section (Oct 14 follow-up, replaces Decisions) ----------
+check("Receipts takes the Decisions slot (Lab < Receipts < Contact)",
+      index.find('id="lab"') < index.find('id="receipts"')
+      < index.find('id="contact"'))
+check("Receipts heading is numbered 05",
+      '<span class="num">05.</span> Receipts' in index)
+check("Contact renumbered to 06 after Receipts",
+      '06. What' in index)
+check("Receipts has exactly three cards",
+      index.count('class="receipt-card"') == 3,
+      f"found {index.count('class=\"receipt-card\"')}")
+check("Receipts has exactly three callout lists",
+      index.count('class="receipt-callouts"') == 3)
+for val in ["1.54%", "1.87%", "2.15%", "2.4%"]:
+    check(f"Synchrony chart shows abandon error {val}",
+          f'class="receipt-bar-value">{val}' in index)
+check("Synchrony chart marks V16 as the pick",
+      'class="receipt-bar pick" style="width: 64%"' in index)
+check("Receipts has no Decisions prose paragraphs",
+      'class="decision"' not in index
+      and 'class="decisions-list"' not in index)
+check("Receipts CSS has no decisions rules",
+      ".decisions-list" not in main_css and ".decision " not in main_css)
+for cls in [".receipts-grid", ".receipt-card", ".receipt-bars",
+            ".receipt-bar-row", ".receipt-table", ".receipt-callouts"]:
+    check(f"main.css defines {cls}", cls in main_css)
 # Each project appears in exactly one card title (Work vs Lab split).
 for name in ["Predictor Hub", "Algo Trade Hub",
              "Stablecoin Remittance Monitor", "Synchrony Guardrail Engine",
@@ -176,6 +220,13 @@ if all(v is not None for v in toy_consts.values()):
           f"got {trad}")
     check("toy defaults reproduce Optimized $11,507,953", opt == 11507953,
           f"got {opt}")
+    check("Receipts Dot Foods table matches toy Traditional total",
+          f"${int(trad):,}" in index, f"toy says {trad}")
+    check("Receipts Dot Foods table matches toy Optimized total",
+          f"${int(opt):,}" in index, f"toy says {opt}")
+    check("Receipts Dot Foods difference matches toy gap",
+          f"Optimized costs ${int(opt - trad):,} more" in index,
+          f"toy gap is {opt - trad}")
 check("no em-dashes in main.js", "\u2014" not in main_js)
 lp = LinkImgParser()
 lp.feed(index)

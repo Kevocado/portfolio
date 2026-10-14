@@ -487,23 +487,69 @@ main {
 
 .live-strip-label { color: var(--green); }
 
-/* ---------- decisions ---------- */
+/* ---------- receipts ---------- */
 
-.decisions-list {
+.receipts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  position: relative;
+  margin-top: 50px;
+}
+
+.receipt-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  margin-bottom: 48px;
+  background: var(--light-navy);
+  border-radius: var(--border-radius);
+  padding: 2rem 1.75rem;
+  transition: var(--transition);
+  box-shadow: 0 10px 30px -15px var(--navy-shadow);
 }
 
-.decision h3 {
-  margin-bottom: 8px;
-  font-size: var(--fz-xl);
-  font-weight: 600;
+.receipt-card:hover { transform: translateY(-7px); }
+
+.receipt-title {
+  margin: 0 0 10px;
   color: var(--lightest-slate);
+  font-size: 22px;
+  font-weight: 600;
 }
 
-.decision p { max-width: 720px; color: var(--light-slate); font-size: 17px; }
+.receipt-context { color: var(--light-slate); font-size: 17px; margin-bottom: 24px; }
+
+.receipt-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+
+.receipt-bar-row { display: flex; align-items: center; gap: 10px; font-family: var(--font-mono); font-size: var(--fz-sm); }
+
+.receipt-bar-label { width: 64px; flex-shrink: 0; color: var(--light-slate); }
+
+.receipt-bar-track { flex-grow: 1; height: 12px; background: var(--lightest-navy); border-radius: var(--border-radius); overflow: hidden; }
+
+.receipt-bar { display: block; height: 100%; background: var(--dark-slate); }
+
+.receipt-bar.pick { background: var(--green); }
+
+.receipt-bar-value { width: 52px; flex-shrink: 0; text-align: right; color: var(--lightest-slate); }
+
+.receipt-chart-note { color: var(--light-slate); font-size: 15px; margin-bottom: 20px; }
+
+.receipt-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--fz-sm); margin-bottom: 20px; }
+
+.receipt-table th, .receipt-table td { text-align: left; padding: 10px 0; border-bottom: 1px solid var(--lightest-navy); vertical-align: top; }
+
+.receipt-table td { text-align: right; color: var(--lightest-slate); padding-left: 12px; }
+
+.receipt-callouts { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+.receipt-callouts li { border-left: 2px solid var(--lightest-navy); padding-left: 12px; font-size: 16px; }
+
+.receipt-link { margin-top: auto; font-family: var(--font-mono); font-size: var(--fz-sm); }
+
+.receipt-link a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
+
+.receipt-link a:hover { color: var(--lightest-slate); }
 
 /* ---------- Dot Foods tradeoff toy ---------- */
 
