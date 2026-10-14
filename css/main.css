@@ -545,60 +545,6 @@ main {
 
 .receipt-callouts li { border-left: 2px solid var(--lightest-navy); padding-left: 12px; font-size: 16px; }
 
-.receipt-findings { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-
-.receipt-findings li { padding-left: 12px; font-size: 16px; }
-
-.receipt-link { margin-top: auto; font-family: var(--font-mono); font-size: var(--fz-sm); }
-
-.receipt-link a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
-
-.receipt-link a:hover { color: var(--lightest-slate); }
-
-/* ---------- Dot Foods tradeoff toy ---------- */
-
-.toy {
-  padding: 28px;
-  border: 1px solid var(--lightest-navy);
-  border-radius: var(--border-radius);
-  background: var(--light-navy);
-}
-
-.toy h3 {
-  margin-bottom: 8px;
-  font-size: var(--fz-xl);
-  font-weight: 600;
-  color: var(--lightest-slate);
-}
-
-.toy-note { max-width: 720px; color: var(--light-slate); font-size: 15px; margin-bottom: 24px; }
-
-.toy-sliders {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
-}
-
-.toy-slider {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-family: var(--font-mono);
-  font-size: var(--fz-sm);
-  color: var(--light-slate);
-}
-
-.toy-slider input[type="range"] {
-  width: 100%;
-  accent-color: var(--green);
-}
-
-.toy-results { font-size: 17px; color: var(--light-slate); margin-bottom: 20px; }
-.toy-results p { margin-bottom: 6px; }
-.toy-results strong { color: var(--lightest-slate); }
-#toyVerdict { color: var(--green); }
-
 /* ---------- contact ---------- */
 
 .contact { text-align: center; max-width: 600px; }

@@ -254,26 +254,6 @@
         <ul class="card-tech"><li>Python</li><li>Econometrics</li><li>Visualization</li></ul>
       </li>
     </ul>
-    <div class="toy" id="dotFoodsToy">
-      <h3>Try the tradeoff</h3>
-      <p class="toy-note">Move the four placeholder unit costs. Quantities stay fixed from the capstone model: 7,229 loads, 309,761 traditional pallets, 416,159 optimized pallets. Simplified illustration. Directional, not validated.</p>
-      <div class="toy-sliders">
-        <label class="toy-slider">Pallet cost: $<span id="palletCostVal">12</span>
-          <input type="range" id="palletCost" min="4" max="30" step="1" value="12"></label>
-        <label class="toy-slider">Warehouse labor: $<span id="laborVal">25</span>/hr
-          <input type="range" id="laborRate" min="10" max="60" step="1" value="25"></label>
-        <label class="toy-slider">Driver sort fee: $<span id="sortFeeVal">0.25</span>/case
-          <input type="range" id="sortFee" min="0.05" max="1" step="0.05" value="0.25"></label>
-        <label class="toy-slider">Driver flat drop fee: $<span id="dropFeeVal">5.00</span>/load
-          <input type="range" id="dropFee" min="1" max="15" step="0.5" value="5"></label>
-      </div>
-      <div class="toy-results">
-        <p>Traditional: <strong id="toyTraditional">$8,457,877</strong></p>
-        <p>Optimized: <strong id="toyOptimized">$11,507,953</strong></p>
-        <p id="toyVerdict">At these assumptions, optimized costs $3,050,076 more than traditional.</p>
-      </div>
-      <button type="button" class="btn btn-small" id="toyReset">Reset to practicum placeholders</button>
-    </div>
   </section>
 </section>
 
@@ -300,13 +280,13 @@
       <li class="receipt-card">
         <h3 class="receipt-title">Busey Bank Transfer Matching</h3>
         <p class="receipt-context">Busey Bank Treasury and ALM: separate real deposit growth from internal transfers.</p>
-        <ul class="receipt-findings">
-          <li>About 9 in 10 transfer dollars matched</li>
-          <li>The rest was categorized by cause, not left unexplained.</li>
-          <li>Some apparent transfers turned out to be loan paydowns, CD issues, or other non-transfer activity, not transfers at all.</li>
-        </ul>
+        <table class="receipt-table">
+          <tr><th scope="row">Transfers reconciled</th><td>$1B+</td></tr>
+          <tr><th scope="row">Variance</th><td>$0 across all five deposit categories</td></tr>
+          <tr><th scope="row">Runtime</th><td>2+ hrs down to 6-13 min per stage</td></tr>
+        </table>
         <ul class="receipt-callouts">
-          <li>A proximity tiebreaker made matching worse, so I dropped it.</li>
+          <li>Proximity tiebreaker made it worse: 90% to 86%</li>
           <li>Confirmation numbers: identical on both legs, collision-proof key.</li>
         </ul>
       </li>
@@ -318,12 +298,11 @@
           <tr><th scope="row">Optimized</th><td>$11,507,953</td></tr>
           <tr><th scope="row">Difference</th><td>Optimized costs $3,050,076 more</td></tr>
         </table>
-        <p class="receipt-chart-note">Placeholder costs, same as the toy.</p>
+        <p class="receipt-chart-note">Placeholder costs.</p>
         <ul class="receipt-callouts">
           <li>Optimized costs more under placeholder costs</li>
           <li>Name the tradeoff, not the savings.</li>
         </ul>
-        <p class="receipt-link"><a href="#dotFoodsToy">Try the tradeoff in the Lab</a></p>
       </li>
     </ul>
   </section>

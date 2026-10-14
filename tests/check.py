@@ -117,26 +117,22 @@ for phrase in ["Hi, my name is", "Kevin Sigey.",
                "150 to 450", "100+ door-to-door"]:
     check(f"index content present: {phrase!r}", phrase in index)
 
-# ---------- 7b. Lab / toy / card signals on index ----------
+# ---------- 7b. Lab / card signals on index ----------
 # The standalone snapshot strip and the Decisions prose are gone (Oct 14
 # follow-up): the Predictor Hub signal lives inside the Predictor Hub card,
-# the Stablecoin refresh note inside the Stablecoin card, and the Dot Foods
-# tradeoff toy lives in the Lab section.
-for frag in ['id="lab"', 'id="dotFoodsToy"',
-             'class="card-signal"', 'id="palletCost"', 'id="laborRate"',
-             'id="sortFee"', 'id="dropFee"', 'id="toyReset"',
-             'id="toyTraditional"', 'id="toyOptimized"', 'id="toyVerdict"',
+# the Stablecoin refresh note inside the Stablecoin card. The Dot Foods
+# tradeoff toy was removed (Oct 14, Kevin's call).
+for frag in ['id="lab"',
+             'class="card-signal"',
              'href="#lab"',
              'id="receipts"', 'class="receipts-grid"',
-             'class="receipt-card"', 'href="#dotFoodsToy"',
+             'class="receipt-card"',
              'class="receipt-bar-row"', 'class="receipt-table"']:
     check(f"index has {frag}", frag in index)
-for phrase in ["The Lab", "Try the tradeoff",
+for phrase in ["The Lab",
                "Snapshot, verified Oct 14, 2026",
                "6 containers on Azure", "Refreshes weekly",
                "The same judgment that frames a shot",
-               "Reset to practicum placeholders",
-               "Simplified illustration. Directional, not validated.",
                "Receipts", "The numbers behind the calls.",
                "Synchrony Datathon: staffing forecasts for four client portfolios.",
                "Abandon error by model version",
@@ -144,16 +140,12 @@ for phrase in ["The Lab", "Try the tradeoff",
                "Shipped V16, not the most accurate model",
                "Abandon error is the metric that predicts customer pain.",
                "Busey Bank Treasury and ALM: separate real deposit growth from internal transfers.",
-               "About 9 in 10 transfer dollars matched",
-               "The rest was categorized by cause, not left unexplained.",
-               "Some apparent transfers turned out to be loan paydowns, CD issues, or other non-transfer activity, not transfers at all.",
-               "A proximity tiebreaker made matching worse, so I dropped it.",
+               "Proximity tiebreaker made it worse: 90% to 86%",
                "Confirmation numbers: identical on both legs, collision-proof key.",
                "MSBA capstone: denser truck loading for a food redistributor.",
                "Optimized costs more under placeholder costs",
                "Name the tradeoff, not the savings.",
-               "Try the tradeoff in the Lab",
-               "Placeholder costs, same as the toy."]:
+               "Placeholder costs."]:
     check(f"index content present: {phrase!r}", phrase in index)
 check("standalone snapshot strip is gone",
       'class="live-strip"' not in index)
@@ -162,9 +154,16 @@ check("Decisions section is gone",
 for headline in ["Ship the less accurate model",
                  "Fix the key, not the tiebreaker"]:
     check(f"Decisions prose gone: {headline!r}", headline not in index)
-check("tradeoff toy lives inside the Lab section",
-      index.find('id="lab"') < index.find('id="dotFoodsToy"')
-      < index.find('id="contact"'))
+# The tradeoff toy is gone entirely: no markup, no IDs, no link, no JS hooks.
+for gone in ['id="dotFoodsToy"', 'Try the tradeoff',
+             'id="palletCost"', 'id="laborRate"',
+             'id="sortFee"', 'id="dropFee"', 'id="toyReset"',
+             'id="toyTraditional"', 'id="toyOptimized"', 'id="toyVerdict"',
+             'href="#dotFoodsToy"', 'Try the tradeoff in the Lab',
+             "Reset to practicum placeholders",
+             "Simplified illustration. Directional, not validated.",
+             "same as the toy"]:
+    check(f"tradeoff toy gone: {gone!r}", gone not in index)
 check("Predictor Hub signal inside its card",
       index.find('Predictor Hub') < index.find('6 containers on Azure')
       < index.find('Synchrony Guardrail Engine'))
@@ -185,21 +184,26 @@ check("Receipts has exactly three cards",
       f"found {index.count('class=\"receipt-card\"')}")
 check("Receipts has exactly three callout lists",
       index.count('class="receipt-callouts"') == 3)
-# Busey card uses estimates only: no actual completed numbers, no bucket
-# names, no transaction counts. Scoped to the Busey card because the
-# Experience section still carries its own $1B+ / $0 variance line.
+# Busey card is the restored table version (Oct 14, Kevin's call): the
+# reconciliation table with the real numbers, the numeric tiebreaker
+# callout, no bucket names, no estimates findings list.
 _busey_start = index.find('Busey Bank Transfer Matching')
 _busey_end = index.find('Dot Foods Capstone', _busey_start)
 busey_card = index[_busey_start:_busey_end] if _busey_start >= 0 else ""
 check("Busey card block found for scoped checks",
       bool(busey_card) and _busey_end > _busey_start)
-for banned in ["$1B", "$0 variance", "2+ hrs", "6-13 min",
-               "90% to 86%", "220,000", "DDA/NOW", "Interest Checking",
-               "MMDA", "Savings", "Time Deposits"]:
-    check(f"Busey card has no actual {banned!r}", banned not in busey_card)
-check("Busey card has no receipt-table (estimates list instead)",
-      'receipt-table' not in busey_card
-      and 'class="receipt-findings"' in busey_card)
+check("Busey card has the reconciliation table",
+      'class="receipt-table"' in busey_card)
+for val in ["$1B+", "$0 across all five deposit categories",
+            "2+ hrs down to 6-13 min per stage",
+            "Proximity tiebreaker made it worse: 90% to 86%"]:
+    check(f"Busey card table/callout has {val!r}", val in busey_card)
+for gone in ["About 9 in 10", "categorized by cause", "loan paydowns",
+             "so I dropped it", "receipt-findings"]:
+    check(f"Busey card has no estimates-era {gone!r}", gone not in busey_card)
+for name in ["DDA/NOW", "Interest Checking",
+             "MMDA", "Savings", "Time Deposits"]:
+    check(f"Busey card names no bucket {name!r}", name not in busey_card)
 for val in ["1.54%", "1.87%", "2.15%", "2.4%"]:
     check(f"Synchrony chart shows abandon error {val}",
           f'class="receipt-bar-value">{val}' in index)
@@ -211,9 +215,12 @@ check("Receipts has no Decisions prose paragraphs",
 check("Receipts CSS has no decisions rules",
       ".decisions-list" not in main_css and ".decision " not in main_css)
 for cls in [".receipts-grid", ".receipt-card", ".receipt-bars",
-            ".receipt-bar-row", ".receipt-table", ".receipt-callouts",
-            ".receipt-findings"]:
+            ".receipt-bar-row", ".receipt-table", ".receipt-callouts"]:
     check(f"main.css defines {cls}", cls in main_css)
+check("main.css has no toy / findings / receipt-link rules",
+      ".toy" not in main_css and "#toyVerdict" not in main_css
+      and ".receipt-findings" not in main_css
+      and ".receipt-link" not in main_css)
 # Each project appears in exactly one card title (Work vs Lab split).
 for name in ["Predictor Hub", "Algo Trade Hub",
              "Stablecoin Remittance Monitor", "Synchrony Guardrail Engine",
@@ -221,29 +228,14 @@ for name in ["Predictor Hub", "Algo Trade Hub",
     titles = re.findall(r'class="card-title">(?:<a[^>]*>)?([^<]+)', index)
     check(f"project {name!r} appears in exactly one card title",
           titles.count(name) == 1, str(titles.count(name)))
-# Dot Foods toy math: extract the constants from main.js and verify the
-# defaults reproduce the notebook totals from the work-history profile.
-toy_consts = {}
-for key in ["P_TRAD", "P_OPT", "LOADS", "CASES", "LABOR_HOURS"]:
-    mm = re.search(rf"var {key} = (\d+);", main_js)
-    toy_consts[key] = int(mm.group(1)) if mm else None
-check("toy constants present in main.js",
-      all(v is not None for v in toy_consts.values()), str(toy_consts))
-if all(v is not None for v in toy_consts.values()):
-    trad = 12 * toy_consts["P_TRAD"] + 0.25 * toy_consts["CASES"]
-    opt = (12 * toy_consts["P_OPT"] + 25 * toy_consts["LABOR_HOURS"]
-           + 5 * toy_consts["LOADS"])
-    check("toy defaults reproduce Traditional $8,457,877", trad == 8457877,
-          f"got {trad}")
-    check("toy defaults reproduce Optimized $11,507,953", opt == 11507953,
-          f"got {opt}")
-    check("Receipts Dot Foods table matches toy Traditional total",
-          f"${int(trad):,}" in index, f"toy says {trad}")
-    check("Receipts Dot Foods table matches toy Optimized total",
-          f"${int(opt):,}" in index, f"toy says {opt}")
-    check("Receipts Dot Foods difference matches toy gap",
-          f"Optimized costs ${int(opt - trad):,} more" in index,
-          f"toy gap is {opt - trad}")
+# Dot Foods toy is gone: no toy code in main.js, and the Receipts
+# Dot Foods card keeps its static cost table.
+for gone in ["dotFoodsToy", "P_TRAD", "P_OPT", "LABOR_HOURS", "toyReset",
+             "toyTraditional", "toyOptimized", "toyVerdict"]:
+    check(f"main.js has no toy code {gone!r}", gone not in main_js)
+for val in ["$8,457,877", "$11,507,953",
+            "Optimized costs $3,050,076 more"]:
+    check(f"Receipts Dot Foods table keeps {val!r}", val in index)
 check("no em-dashes in main.js", "\u2014" not in main_js)
 lp = LinkImgParser()
 lp.feed(index)
