@@ -21,12 +21,20 @@
     shootIndex[s.slug] = { title: s.title, post: s.post,
                             start: ITEMS.length, count: s.files.length };
     s.files.forEach(function (f) {
-      ITEMS.push({ src: f.src, title: s.title, post: f.post,
-                   alt: 'Photograph from ' + s.title + ' by Kevin Sigey.' });
+      /* Merged albums keep each frame's original shoot title and its own
+         Instagram post; the lightbox link must match the displayed frame. */
+      var frameTitle = f.title || s.title;
+      ITEMS.push({ src: f.src, title: frameTitle, post: f.post,
+                   alt: 'Photograph from ' + frameTitle + ' by Kevin Sigey.' });
     });
   });
 
-  /* ---------- Featured reel: auto-scroll + arrows + drag ---------- */
+  /* ---------- Featured reel: auto-scroll + arrows + drag ----------
+     Auto-scroll always resumes after interaction ends: pointer leaving
+     the reel, touch ending, or the reel scrolling back into view all
+     clear the pause. Hover is tracked with pointer events (mouseenter
+     can stick on touch devices); IntersectionObserver gates scrolling
+     to when the reel is actually visible. */
   var reel = document.getElementById('reel');
   var track = document.getElementById('reelTrack');
   var caption = document.getElementById('reelCaption');
@@ -39,6 +47,8 @@
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var autoOn = !reduceMotion;
     var hoverPause = false;
+    var pointerOver = false;
+    var inView = true;
     var interactPauseUntil = 0;
     var dragging = false;
     var dragMoved = 0;
@@ -71,7 +81,7 @@
     function tick() {
       var now = Date.now();
       if (autoOn && !hoverPause && !dragging && now > interactPauseUntil &&
-          !document.hidden) {
+          !document.hidden && inView) {
         reel.scrollLeft += SPEED;
         var hw = halfWidth();
         if (hw > 0 && reel.scrollLeft >= hw) {
@@ -86,14 +96,58 @@
       interactPauseUntil = Date.now() + 3500;
     }
 
-    reel.addEventListener('mouseenter', function () { hoverPause = true; });
-    reel.addEventListener('mouseleave', function () {
+    /* Short settle after a swipe or drag ends, then resume. */
+    function settleAfterInteraction() {
+      interactPauseUntil = Date.now() + 800;
+    }
+
+    /* Pointer leaving the reel resumes immediately: the interaction
+       is over, so there is nothing left to pause for. */
+    reel.addEventListener('pointerenter', function () {
+      pointerOver = true;
+      hoverPause = true;
+    });
+    reel.addEventListener('pointerleave', function () {
+      pointerOver = false;
       hoverPause = false;
       dragging = false;
+      interactPauseUntil = 0;
       reel.classList.remove('dragging');
     });
     reel.addEventListener('wheel', pauseForInteraction, { passive: true });
-    reel.addEventListener('touchstart', pauseForInteraction, { passive: true });
+    reel.addEventListener('touchstart', function () {
+      hoverPause = true;
+      pauseForInteraction();
+    }, { passive: true });
+    reel.addEventListener('touchend', function () {
+      hoverPause = false;
+      settleAfterInteraction();
+    }, { passive: true });
+    reel.addEventListener('touchcancel', function () {
+      hoverPause = false;
+      interactPauseUntil = 0;
+    }, { passive: true });
+
+    /* When the reel scrolls back into view, resume unless the pointer
+       is currently over it. Without this, a stuck hover pause could
+       silence the reel for the rest of the visit. */
+    if (typeof IntersectionObserver !== 'undefined') {
+      var reelObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          inView = entry.isIntersecting;
+          if (inView && !pointerOver) {
+            hoverPause = false;
+            dragging = false;
+            interactPauseUntil = 0;
+          }
+        });
+      }, { threshold: 0.1 });
+      reelObserver.observe(reel);
+    }
+    window.addEventListener('blur', function () {
+      dragging = false;
+      hoverPause = false;
+    });
 
     /* Mouse drag-to-scroll (touch uses native scrolling). */
     reel.addEventListener('pointerdown', function (e) {
@@ -116,7 +170,14 @@
       if (!dragging) { return; }
       dragging = false;
       reel.classList.remove('dragging');
+      settleAfterInteraction();
       if (dragMoved > 8) { dragSuppressClick = true; }
+    });
+    window.addEventListener('pointercancel', function () {
+      dragging = false;
+      hoverPause = false;
+      interactPauseUntil = 0;
+      reel.classList.remove('dragging');
     });
 
     function nudge(dir) {
@@ -158,8 +219,16 @@
     if (!info) { return; }
     LIST = ITEMS.slice(info.start, info.start + info.count);
     popTitle.textContent = info.title;
-    popIg.href = info.post;
-    popIg.setAttribute('aria-label', 'View ' + info.title + ' on Instagram');
+    if (info.post) {
+      popIg.style.display = '';
+      popIg.href = info.post;
+      popIg.setAttribute('aria-label', 'View ' + info.title + ' on Instagram');
+    } else {
+      /* Merged albums span several Instagram posts, so no single link
+         represents the album. Each frame's own lightbox link carries
+         its original post. */
+      popIg.style.display = 'none';
+    }
     popFrames.innerHTML = '';
     LIST.forEach(function (it, i) {
       var b = document.createElement('button');
@@ -211,7 +280,13 @@
     lbImg.alt = it.alt;
     lbTitle.textContent = it.title;
     if (lbCount) { lbCount.textContent = (cur + 1) + ' / ' + LIST.length; }
-    lbIg.href = it.post;
+    /* The Instagram link always matches the displayed frame. */
+    if (it.post) {
+      lbIg.style.display = '';
+      lbIg.href = it.post;
+    } else {
+      lbIg.style.display = 'none';
+    }
     lbIg.setAttribute('aria-label', 'View ' + it.title + ' on Instagram');
   }
   function openLb(list, i) {

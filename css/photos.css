@@ -1,4 +1,4 @@
-/* Photography page - Brittany Chiang v4 tokens. Flat colors only, no gradients. */
+/* Photography page - neutral palette tokens from main.css. Flat colors only, no gradients. */
 
 /* ---------- Featured reel (auto-scroll + manual control) ---------- */
 .reel-section {
@@ -60,7 +60,7 @@
   object-fit: cover;
   border-radius: var(--border-radius);
   transition: transform 0.45s ease, box-shadow 0.45s ease;
-  box-shadow: 0 0 0 1px rgba(100, 255, 218, 0.12);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
   pointer-events: none;
 }
 

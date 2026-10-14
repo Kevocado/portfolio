@@ -58,10 +58,17 @@ for legacy in ["theme-editorial.css", "theme-darkroom.css",
                "data-set-theme"]:
     check(f"index does not reference legacy {legacy}", legacy not in index)
 
-# ---------- 3. v4 design tokens ----------
-for token in ["#0c0c0e", "#17171b", "#8892b0", "#ccd6f6", "#64ffda",
+# ---------- 3. neutral palette tokens (white text, white/gray accents) ----------
+for token in ["#0c0c0e", "#17171b", "#ffffff",
               "JetBrains Mono", "--nav-height", "--green-tint"]:
-    check(f"main.css uses v4 token {token}", token in main_css)
+    check(f"main.css uses token {token}", token in main_css)
+check("main.css accent is white, not teal", "--green: #ffffff" in main_css)
+check("main.css header is off-black, not navy",
+      "rgba(12, 12, 14, 0.9)" in main_css)
+for banned in ["#64ffda", "#57cbff", "#0a192f", "#112240", "#8892b0",
+               "#ccd6f6", "#a8b2d1", "#e6f1ff", "#495670",
+               "rgba(10, 25, 47", "rgba(100, 255, 218"]:
+    check(f"main.css has no blue/teal {banned}", banned not in main_css)
 
 # ---------- 4. Kevin's hard rule: FLAT colors, no gradients ----------
 check("main.css has no linear-gradient", "linear-gradient" not in main_css)
@@ -110,7 +117,46 @@ for phrase in ["Hi, my name is", "Kevin Sigey.",
                "150 to 450", "100+ door-to-door"]:
     check(f"index content present: {phrase!r}", phrase in index)
 
-# ---------- 7. links / imgs / emojis / lorem on index ----------
+# ---------- 7b. Lab / Decisions / toy / live strip on index ----------
+for frag in ['id="lab"', 'id="decisions"', 'id="dotFoodsToy"',
+             'class="live-strip"', 'id="palletCost"', 'id="laborRate"',
+             'id="sortFee"', 'id="dropFee"', 'id="toyReset"',
+             'id="toyTraditional"', 'id="toyOptimized"', 'id="toyVerdict"',
+             'href="#lab"', 'href="#decisions"']:
+    check(f"index has {frag}", frag in index)
+for phrase in ["The Lab", "Decisions", "Try the tradeoff",
+               "Snapshot, verified Oct 14, 2026",
+               "The same judgment that frames a shot",
+               "Ship the less accurate model",
+               "Name the tradeoff, not the savings",
+               "Fix the key, not the tiebreaker",
+               "Reset to practicum placeholders",
+               "Simplified illustration. Directional, not validated."]:
+    check(f"index content present: {phrase!r}", phrase in index)
+# Each project appears in exactly one card title (Work vs Lab split).
+for name in ["Predictor Hub", "Algo Trade Hub",
+             "Stablecoin Remittance Monitor", "Synchrony Guardrail Engine",
+             "FPL Scout", "Tightness Paradox", "Data-Center Energy Analysis"]:
+    titles = re.findall(r'class="card-title">(?:<a[^>]*>)?([^<]+)', index)
+    check(f"project {name!r} appears in exactly one card title",
+          titles.count(name) == 1, str(titles.count(name)))
+# Dot Foods toy math: extract the constants from main.js and verify the
+# defaults reproduce the notebook totals from the work-history profile.
+toy_consts = {}
+for key in ["P_TRAD", "P_OPT", "LOADS", "CASES", "LABOR_HOURS"]:
+    mm = re.search(rf"var {key} = (\d+);", main_js)
+    toy_consts[key] = int(mm.group(1)) if mm else None
+check("toy constants present in main.js",
+      all(v is not None for v in toy_consts.values()), str(toy_consts))
+if all(v is not None for v in toy_consts.values()):
+    trad = 12 * toy_consts["P_TRAD"] + 0.25 * toy_consts["CASES"]
+    opt = (12 * toy_consts["P_OPT"] + 25 * toy_consts["LABOR_HOURS"]
+           + 5 * toy_consts["LOADS"])
+    check("toy defaults reproduce Traditional $8,457,877", trad == 8457877,
+          f"got {trad}")
+    check("toy defaults reproduce Optimized $11,507,953", opt == 11507953,
+          f"got {opt}")
+check("no em-dashes in main.js", "\u2014" not in main_js)
 lp = LinkImgParser()
 lp.feed(index)
 check("index: every <a> has a non-empty href", not lp.bad_links)
@@ -143,37 +189,50 @@ for gone in ["San Francisco", "san-francisco", "Fly Kids Community",
 # ---------- 10. photos.html: manifest parity (files are {src, post}) ----------
 manifest = json.loads((SITE / "assets" / "photos" / "manifest.json")
                       .read_text(encoding="utf-8"))
-check("manifest has >= 72 shoots", len(manifest) >= 72,
+check("manifest has 50 shoots after consolidation", len(manifest) == 50,
       f"found {len(manifest)}")
 cats = {m["category"] for m in manifest}
 check("manifest categories are exactly Fashion/Editorial/Portrait",
       cats == {"Fashion", "Editorial", "Portrait"}, str(cats))
 check("manifest has 3 featured shoots",
       sum(1 for m in manifest if m.get("featured")) == 3)
-# HARD RULE (Kevin, 2026-10-12): one shoot/collection = exactly ONE
-# Instagram post. Every photo in a shoot must share one post URL, and the
-# shoot-level post_url must be that same post. Fail loudly otherwise.
-one_post_violations = [
-    m["slug"] for m in manifest
-    if len({f["post"] for f in m["files"]}) != 1
-]
-check("one post per shoot (hard rule)", not one_post_violations,
-      str(one_post_violations)[:200])
-post_url_mismatch = [
-    m["slug"] for m in manifest
-    if m.get("post_url") not in {f["post"] for f in m["files"]}
-]
-check("shoot post_url matches its files' shared post", not post_url_mismatch,
-      str(post_url_mismatch)[:200])
-# no post may lose photos vs the baseline (186 photos after the
-# 2026-10-12 removal of back-and-better and album-release-party);
-# splits move photos between shoots, never drop them
-BASELINE_TOTAL_PHOTOS = 186
+# Consolidation (2026-10-14): the Whithering / Into the Abyss / Pensive
+# trio merged into one autumn-series album; thin single-frame Editorial
+# and Portrait albums consolidated into singles collections. The
+# one-post-per-shoot rule is DROPPED: merged albums span several posts,
+# and each frame keeps its own original Instagram post and title.
+for slug, n in [("autumn-series", 3), ("editorial-singles", 18),
+                ("portrait-singles", 4)]:
+    m = next((x for x in manifest if x["slug"] == slug), None)
+    check(f"merged album {slug} exists with {n} frames",
+          m is not None and len(m["files"]) == n,
+          f"found {len(m['files']) if m else 0}")
+    check(f"merged album {slug} has no single post_url",
+          m is not None and m.get("post_url") is None)
+    check(f"merged album {slug} frames keep per-frame titles",
+          m is not None and all("title" in f for f in m["files"]))
+    check(f"merged album {slug} frames keep distinct original posts",
+          m is not None and len({f["post"] for f in m["files"]}) > 1)
+for gone in ["whithering", "into-the-abyss", "pensive",
+             "earl-sweatshirt-doechii", "spring-life", "wash-drummer",
+             "wash-skaters", "step-team", "2000s-party",
+             "studio18-anniversary", "melanin-pt3", "searching", "mayhem",
+             "serendipity-experiment", "terrestrial-discovery",
+             "nouveau-american-gothic", "photo-vogue",
+             "fort-greene-archives", "254-radio", "soho-incident",
+             "2024-recap", "birthday-shots", "sun-basking", "kem-shoot",
+             "man-in-the-mirror"]:
+    check(f"consolidated-away shoot gone: {gone}",
+          gone not in {m["slug"] for m in manifest})
+# no post may lose photos vs the baseline (321 photos total);
+# merges move photos between shoots, never drop them
+BASELINE_TOTAL_PHOTOS = 321
 total_photos = sum(len(m["files"]) for m in manifest)
-check("no photos dropped vs baseline", total_photos >= BASELINE_TOTAL_PHOTOS,
+check("no photos dropped vs baseline", total_photos == BASELINE_TOTAL_PHOTOS,
       f"found {total_photos}")
-check("manifest files are {src, post} objects",
+check("manifest files are {src, post} objects with optional per-frame title",
       all(isinstance(f, dict) and "src" in f and "post" in f
+          and set(f) <= {"src", "post", "title"}
           for m in manifest for f in m["files"]))
 
 photo_srcs = re.findall(r'<img[^>]+src="([^"]+)"', photos)
@@ -212,7 +271,12 @@ check("reel has drag-to-scroll",
 check("reel auto-scrolls via JS",
       "requestAnimationFrame" in photos_js and "scrollLeft" in photos_js)
 check("reel pauses on hover",
-      "mouseenter" in photos_js and "hoverPause" in photos_js)
+      "pointerenter" in photos_js and "pointerleave" in photos_js
+      and "hoverPause" in photos_js)
+check("reel resumes on touch end",
+      "touchend" in photos_js and "touchcancel" in photos_js)
+check("reel resumes when scrolled back into view",
+      "IntersectionObserver" in photos_js and "inView" in photos_js)
 check("reel items open the shoot album, not Instagram",
       all('data-shoot=' in b for b in visible_items)
       and not any('instagram.com' in b for b in visible_items))
@@ -258,6 +322,12 @@ check("lightbox has explicit IG link, new tab",
 check("lightbox keyboard support in photos.js",
       all(k in (SITE / "js" / "photos.js").read_text(encoding="utf-8")
           for k in ["Escape", "ArrowLeft", "ArrowRight"]))
+check("lightbox IG link matches the displayed frame",
+      "lbIg.href = it.post" in photos_js)
+check("album popup hides IG link for multi-post albums",
+      "popIg.style.display" in photos_js)
+check("frames keep per-frame titles in photos.js",
+      "f.title || s.title" in photos_js)
 
 # ---------- 13. IG links are secondary: no photo click goes to Instagram ----------
 ig_anchors = re.findall(r'<a[^>]*href="(https://www\.instagram\.com/p/[^"]+)"[^>]*>',
@@ -271,11 +341,23 @@ check("static HTML has no per-photo IG links (JS renders them)",
 gallery_json = json.loads(re.search(
     r'<script type="application/json" id="galleryData">\s*(\{.*?\})\s*</script>',
     photos, re.S).group(1))
+gallery_by_slug = {s["slug"]: s for s in gallery_json["shoots"]}
 for m in manifest:
-    check(f"IG post in gallery JSON for {m['slug']}",
-          any(s["post"] == m["post_url"] for s in gallery_json["shoots"])
-          or any(f["post"] == m["post_url"] for s in gallery_json["shoots"]
-                 for f in s["files"]))
+    g = gallery_by_slug.get(m["slug"])
+    check(f"gallery JSON has shoot {m['slug']}", g is not None)
+    if g is None:
+        continue
+    # Every frame's original post must survive in the gallery JSON;
+    # shoot-level post is null for multi-post albums, else one of the
+    # frame posts. Per-frame titles ride along for merged albums.
+    check(f"gallery JSON keeps every frame post for {m['slug']}",
+          [f["post"] for f in g["files"]] ==
+          [f["post"] for f in m["files"]])
+    check(f"gallery JSON shoot post valid for {m['slug']}",
+          g["post"] is None or g["post"] in {f["post"] for f in m["files"]})
+    check(f"gallery JSON keeps per-frame titles for {m['slug']}",
+          [f.get("title") for f in g["files"]] ==
+          [f.get("title") for f in m["files"]])
 
 # ---------- 14. shoot cards open the lightbox directly ----------
 for cat in ["fashion", "editorial", "portrait"]:
@@ -320,10 +402,14 @@ check("photos.css has no gradients",
       "linear-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8")
       and "radial-gradient" not in (SITE / "css" / "photos.css").read_text(encoding="utf-8"))
 # near-black palette (Kevin, 2026-10-12): no navy blues on the photos page
+# plus the 2026-10-14 neutral direction: no blue/teal anywhere
 photos_css = (SITE / "css" / "photos.css").read_text(encoding="utf-8")
 check("photos.css has no navy blues",
       "#0a192f" not in photos_css.lower() and "#112240" not in photos_css.lower(),
       "found navy hex in photos.css")
+for banned in ["#64ffda", "#57cbff", "#8892b0", "#ccd6f6", "#a8b2d1",
+               "#e6f1ff", "#495670", "rgba(100, 255, 218"]:
+    check(f"photos.css has no blue/teal {banned}", banned not in photos_css)
 
 # ---------- 12. resume.pdf / papers ----------
 pdf = SITE / "assets" / "resume.pdf"
