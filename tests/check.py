@@ -144,14 +144,15 @@ for phrase in ["The Lab", "Try the tradeoff",
                "Shipped V16, not the most accurate model",
                "Abandon error is the metric that predicts customer pain.",
                "Busey Bank Treasury and ALM: separate real deposit growth from internal transfers.",
-               "Proximity tiebreaker made it worse: 90% to 86%",
+               "About 9 in 10 transfer dollars matched",
+               "The rest was categorized by cause, not left unexplained.",
+               "Some apparent transfers turned out to be loan paydowns, CD issues, or other non-transfer activity, not transfers at all.",
+               "A proximity tiebreaker made matching worse, so I dropped it.",
                "Confirmation numbers: identical on both legs, collision-proof key.",
                "MSBA capstone: denser truck loading for a food redistributor.",
                "Optimized costs more under placeholder costs",
                "Name the tradeoff, not the savings.",
                "Try the tradeoff in the Lab",
-               "$1B+", "$0 across all five deposit categories",
-               "2+ hrs down to 6-13 min per stage",
                "Placeholder costs, same as the toy."]:
     check(f"index content present: {phrase!r}", phrase in index)
 check("standalone snapshot strip is gone",
@@ -184,6 +185,21 @@ check("Receipts has exactly three cards",
       f"found {index.count('class=\"receipt-card\"')}")
 check("Receipts has exactly three callout lists",
       index.count('class="receipt-callouts"') == 3)
+# Busey card uses estimates only: no actual completed numbers, no bucket
+# names, no transaction counts. Scoped to the Busey card because the
+# Experience section still carries its own $1B+ / $0 variance line.
+_busey_start = index.find('Busey Bank Transfer Matching')
+_busey_end = index.find('Dot Foods Capstone', _busey_start)
+busey_card = index[_busey_start:_busey_end] if _busey_start >= 0 else ""
+check("Busey card block found for scoped checks",
+      bool(busey_card) and _busey_end > _busey_start)
+for banned in ["$1B", "$0 variance", "2+ hrs", "6-13 min",
+               "90% to 86%", "220,000", "DDA/NOW", "Interest Checking",
+               "MMDA", "Savings", "Time Deposits"]:
+    check(f"Busey card has no actual {banned!r}", banned not in busey_card)
+check("Busey card has no receipt-table (estimates list instead)",
+      'receipt-table' not in busey_card
+      and 'class="receipt-findings"' in busey_card)
 for val in ["1.54%", "1.87%", "2.15%", "2.4%"]:
     check(f"Synchrony chart shows abandon error {val}",
           f'class="receipt-bar-value">{val}' in index)
@@ -195,7 +211,8 @@ check("Receipts has no Decisions prose paragraphs",
 check("Receipts CSS has no decisions rules",
       ".decisions-list" not in main_css and ".decision " not in main_css)
 for cls in [".receipts-grid", ".receipt-card", ".receipt-bars",
-            ".receipt-bar-row", ".receipt-table", ".receipt-callouts"]:
+            ".receipt-bar-row", ".receipt-table", ".receipt-callouts",
+            ".receipt-findings"]:
     check(f"main.css defines {cls}", cls in main_css)
 # Each project appears in exactly one card title (Work vs Lab split).
 for name in ["Predictor Hub", "Algo Trade Hub",

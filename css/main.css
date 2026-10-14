@@ -545,6 +545,10 @@ main {
 
 .receipt-callouts li { border-left: 2px solid var(--lightest-navy); padding-left: 12px; font-size: 16px; }
 
+.receipt-findings { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+
+.receipt-findings li { padding-left: 12px; font-size: 16px; }
+
 .receipt-link { margin-top: auto; font-family: var(--font-mono); font-size: var(--fz-sm); }
 
 .receipt-link a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
