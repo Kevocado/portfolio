@@ -446,6 +446,13 @@ main {
 .dot.live { background: var(--green); }
 .dot.building { background: #9a9a9a; }
 
+.card-signal {
+  margin: 8px 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--fz-xs);
+  color: var(--slate);
+}
+
 .card-tech {
   display: flex;
   align-items: flex-end;

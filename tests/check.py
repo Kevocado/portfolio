@@ -117,22 +117,42 @@ for phrase in ["Hi, my name is", "Kevin Sigey.",
                "150 to 450", "100+ door-to-door"]:
     check(f"index content present: {phrase!r}", phrase in index)
 
-# ---------- 7b. Lab / Decisions / toy / live strip on index ----------
-for frag in ['id="lab"', 'id="decisions"', 'id="dotFoodsToy"',
-             'class="live-strip"', 'id="palletCost"', 'id="laborRate"',
+# ---------- 7b. Lab / toy / card signals on index ----------
+# The standalone snapshot strip and the Decisions prose are gone (Oct 14
+# follow-up): the Predictor Hub signal lives inside the Predictor Hub card,
+# the Stablecoin refresh note inside the Stablecoin card, and the Dot Foods
+# tradeoff toy lives in the Lab section.
+for frag in ['id="lab"', 'id="dotFoodsToy"',
+             'class="card-signal"', 'id="palletCost"', 'id="laborRate"',
              'id="sortFee"', 'id="dropFee"', 'id="toyReset"',
              'id="toyTraditional"', 'id="toyOptimized"', 'id="toyVerdict"',
-             'href="#lab"', 'href="#decisions"']:
+             'href="#lab"']:
     check(f"index has {frag}", frag in index)
-for phrase in ["The Lab", "Decisions", "Try the tradeoff",
+for phrase in ["The Lab", "Try the tradeoff",
                "Snapshot, verified Oct 14, 2026",
+               "6 containers on Azure", "Refreshes weekly",
                "The same judgment that frames a shot",
-               "Ship the less accurate model",
-               "Name the tradeoff, not the savings",
-               "Fix the key, not the tiebreaker",
                "Reset to practicum placeholders",
                "Simplified illustration. Directional, not validated."]:
     check(f"index content present: {phrase!r}", phrase in index)
+check("standalone snapshot strip is gone",
+      'class="live-strip"' not in index)
+check("Decisions section is gone",
+      'id="decisions"' not in index and 'href="#decisions"' not in index)
+for headline in ["Ship the less accurate model",
+                 "Name the tradeoff, not the savings",
+                 "Fix the key, not the tiebreaker"]:
+    check(f"Decisions prose gone: {headline!r}", headline not in index)
+check("tradeoff toy lives inside the Lab section",
+      index.find('id="lab"') < index.find('id="dotFoodsToy"')
+      < index.find('id="contact"'))
+check("Predictor Hub signal inside its card",
+      index.find('Predictor Hub') < index.find('6 containers on Azure')
+      < index.find('Synchrony Guardrail Engine'))
+check("Stablecoin refresh note inside its card",
+      index.find('Stablecoin Remittance Monitor')
+      < index.find('Refreshes weekly')
+      < index.find('FPL Scout'))
 # Each project appears in exactly one card title (Work vs Lab split).
 for name in ["Predictor Hub", "Algo Trade Hub",
              "Stablecoin Remittance Monitor", "Synchrony Guardrail Engine",
