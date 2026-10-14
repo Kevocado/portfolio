@@ -1,0 +1,86 @@
+name: Build and deploy Portfolio
+
+# A merge to main deploys. The paths filter lists what goes INTO the image:
+# the two pages, styles, scripts, assets (photos, resume), and the container
+# files. A change that did not match would build nothing and deploy nothing.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'photos.html'
+      - 'css/**'
+      - 'js/**'
+      - 'assets/**'
+      - 'Dockerfile'
+      - 'Caddyfile'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  # Required to push to GHCR at all. It is NOT sufficient here: the package is
+  # not linked to this repository, so the push is authenticated as the PAT
+  # below, not as this token. See the login step.
+  packages: write
+
+jobs:
+  build:
+    name: Build and push the image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          # GHCR_PAT, not GITHUB_TOKEN, and that is not a preference.
+          # ghcr.io/kevocado/portfolio is USER-scoped, not linked to this
+          # repository, and GITHUB_TOKEN may only write to packages linked to
+          # its own repo -- so the push dies with
+          # `denied: permission_denied: write_package` AFTER the image has
+          # already built and tagged correctly. Same lesson as the
+          # sports-predictor deploy (NFL and CFB both lost their first deploy
+          # this way). The PAT is already a secret on Kevin's other site repos;
+          # add it to this repo's secrets as GHCR_PAT.
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Build and push Portfolio image
+        run: |
+          docker build -t ghcr.io/kevocado/portfolio:${{ github.sha }} -t ghcr.io/kevocado/portfolio:latest .
+          docker push ghcr.io/kevocado/portfolio:${{ github.sha }}
+          docker push ghcr.io/kevocado/portfolio:latest
+
+  # Pulls the image pushed above on the VPS stack at /opt/stack. `bin/deploy`
+  # is the only thing the CI key can ask for -- a forced command in the deploy
+  # user's authorized_keys -- and it pins the sha in .env, restarts,
+  # health-checks, and rolls back to the previous tag if the new one is
+  # unhealthy. Fail-soft image + builder prune runs before every deploy on the
+  # VPS (never volumes -- that would destroy kalshi_portfolio data).
+  #
+  # VPS-side prerequisite: bin/deploy must know the `portfolio` service
+  # (service map + compose entry + reverse-proxy routing), or this job's ssh
+  # command will fail.
+  vps:
+    name: Deploy to the VPS
+    needs: build
+    if: vars.VPS_HOST != ''
+    runs-on: ubuntu-latest
+    # One deploy at a time per service: two repos pushing at once race on
+    # /opt/stack/.env. bin/deploy takes its own lock too; this keeps the queue
+    # off the box.
+    concurrency: vps-deploy-portfolio
+    steps:
+      - name: Deploy to VPS
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+          # Written before the first connection, or ssh prompts to confirm the
+          # host key and the job hangs until it times out.
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh deploy@${{ vars.VPS_HOST }} deploy portfolio ${{ github.sha }}
