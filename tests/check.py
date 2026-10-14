@@ -100,6 +100,9 @@ for phrase in ["Hi, my name is", "Kevin Sigey.",
                "Stablecoin Remittance Monitor",
                "Synchrony Guardrail Engine", "FPL Scout",
                "Tightness Paradox", "Data-Center Energy Analysis",
+               "Deposit Rollforward", "Power Query (M)", "Power Pivot (DAX)",
+               "Monthly deposit rollforward for Liquidity Management",
+               "Shipped &middot; Internal system",
                "Status: Live", "In active rebuild", "Pipeline running",
                "Competition entry", "Status: Shipped",
                "Status: Research paper", "Status: Interactive paper",
@@ -224,10 +227,25 @@ check("main.css has no toy / findings / receipt-link rules",
 # Each project appears in exactly one card title (Work vs Lab split).
 for name in ["Predictor Hub", "Algo Trade Hub",
              "Stablecoin Remittance Monitor", "Synchrony Guardrail Engine",
-             "FPL Scout", "Tightness Paradox", "Data-Center Energy Analysis"]:
+             "FPL Scout", "Tightness Paradox", "Data-Center Energy Analysis",
+             "Deposit Rollforward &amp; Transfer-Matching System"]:
     titles = re.findall(r'class="card-title">(?:<a[^>]*>)?([^<]+)', index)
     check(f"project {name!r} appears in exactly one card title",
           titles.count(name) == 1, str(titles.count(name)))
+# Busey Work card: title links to #receipts (internal work, no public
+# demo or repo), and the card carries no external link.
+check("Busey Work card title links to #receipts",
+      '<a href="#receipts">Deposit Rollforward' in index)
+_busey_pos = index.find("Deposit Rollforward")
+_busey_start = index.rfind('<li class="project-card">', 0, _busey_pos)
+_busey_end = index.find("      </li>", _busey_pos)
+_busey_card = index[_busey_start:_busey_end]
+check("Busey Work card has no external link",
+      "http" not in _busey_card, _busey_card[:200])
+check("Busey Work card has the approved tech tags",
+      all(t in _busey_card for t in
+          ["<li>Excel</li>", "<li>Power Query (M)</li>",
+           "<li>Power Pivot (DAX)</li>"]))
 # Dot Foods toy is gone: no toy code in main.js, and the Receipts
 # Dot Foods card keeps its static cost table.
 for gone in ["dotFoodsToy", "P_TRAD", "P_OPT", "LABOR_HOURS", "toyReset",
