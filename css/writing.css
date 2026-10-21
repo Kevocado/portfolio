@@ -1,0 +1,43 @@
+/* Writing page - paper cards, same flat near-black palette as main.css */
+
+.writing-intro { max-width: 720px; }
+.writing-intro p { color: #c9c9ce; font-size: var(--fz-lg); line-height: 1.6; }
+
+.paper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.paper-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--light-navy);
+  border: 1px solid var(--lightest-navy);
+  border-radius: var(--border-radius);
+  padding: 28px;
+  transition: var(--transition);
+}
+.paper-card:hover { transform: translateY(-4px); border-color: #3d3d45; }
+
+.paper-meta {
+  font-family: var(--font-mono);
+  font-size: var(--fz-xs);
+  letter-spacing: 0.04em;
+  color: #9a9aa2;
+  text-transform: uppercase;
+}
+
+.paper-title { font-size: 24px; font-weight: 700; line-height: 1.25; }
+
+.paper-thesis { color: #c9c9ce; font-size: var(--fz-md); line-height: 1.6; flex: 1; }
+
+.paper-link {
+  font-family: var(--font-mono);
+  font-size: var(--fz-sm);
+  color: var(--white);
+}
+.paper-link span { display: inline-block; transition: var(--transition); }
+.paper-card:hover .paper-link span { transform: translateX(4px); }
