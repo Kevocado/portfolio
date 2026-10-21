@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,600&display=swap" rel="stylesheet">
+<title>The Hidden Megawatts</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#081014;--bg2:#0c171d;--paper:#101e25;--paper2:#14252d;
+  --text:#eef3f1;--muted:#9fb0b4;--line:#263840;--cyan:#56d8d0;--cyan2:#9ae7df;
+  --amber:#ffb547;--amber2:#ffd186;--red:#ff6b5f;--phase1:#2a1d13;--phase2:#10232b;--phase3:#172b2b;--phase4:#2a2213;
+  --shadow:0 18px 50px rgba(0,0,0,.2);
+}
+@media(prefers-color-scheme:light){:root{
+  --bg:#edf2f1;--bg2:#e4ecea;--paper:#f8fbfa;--paper2:#fff;
+  --text:#112027;--muted:#4e6268;--line:#c7d5d3;--cyan:#007e7a;--cyan2:#005d5a;
+  --amber:#ad5b00;--amber2:#7b4000;--red:#b9372e;--phase1:#f1dfca;--phase2:#dcebea;--phase3:#d8e8e4;--phase4:#f4e9cd;
+  --shadow:0 18px 50px rgba(28,56,62,.10);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"IBM Plex Sans",sans-serif;line-height:1.6}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(86,216,208,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(86,216,208,.025) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(to bottom,black,transparent 60%);z-index:-1}
+a{color:var(--cyan2)}
+main{overflow:hidden}
+.wrap{width:min(1180px,calc(100% - 40px));margin:auto}
+.hero{min-height:92vh;display:grid;align-items:end;padding:clamp(84px,12vw,150px) 0 70px;border-bottom:1px solid var(--line);position:relative}
+.hero:after{content:"2016—2025";position:absolute;right:clamp(20px,5vw,80px);top:42px;font:500 12px/1 "IBM Plex Sans",sans-serif;letter-spacing:.17em;color:var(--muted)}
+.kicker{font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--amber);font-weight:600;margin:0 0 24px}
+h1{font:600 clamp(3.25rem,8.5vw,7.7rem)/.89 "Newsreader",serif;letter-spacing:-.055em;max-width:1020px;margin:0}
+h1 em{color:var(--amber);font-style:normal}
+.deck{font:400 clamp(1.15rem,2vw,1.55rem)/1.5 "Newsreader",serif;color:var(--muted);max-width:730px;margin:34px 0 40px}
+.byline{display:flex;gap:14px;align-items:center;font-size:.83rem;color:var(--muted)}
+.byline:before{content:"";width:42px;height:2px;background:var(--cyan)}
+.section{padding:clamp(78px,10vw,130px) 0;border-bottom:1px solid var(--line)}
+.reader{width:min(760px,calc(100% - 40px));margin:auto}
+.eyebrow{color:var(--amber);font-size:.76rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin:0 0 18px}
+h2{font:600 clamp(2.4rem,5vw,4.9rem)/.96 "Newsreader",serif;letter-spacing:-.04em;margin:0 0 32px}
+h3{font:600 1.55rem/1.15 "Newsreader",serif;margin:0 0 12px}
+p{margin:0 0 1.25rem}.lede{font:400 clamp(1.35rem,2.3vw,1.8rem)/1.42 "Newsreader",serif;color:var(--text)}
+.callout{margin:44px 0;padding:26px 30px;border-left:4px solid var(--amber);background:var(--paper);font:400 1.12rem/1.55 "Newsreader",serif}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:66px}
+.stat{background:var(--paper);padding:30px 24px;min-height:200px;display:flex;flex-direction:column;justify-content:space-between}
+.stat-value{font:600 clamp(2.2rem,4vw,4rem)/1 "Newsreader",serif;color:var(--amber);letter-spacing:-.04em}
+.stat-label{font-size:.88rem;color:var(--muted);line-height:1.45}.stat-label b{color:var(--text);font-weight:500}
+.chart-shell{margin-top:48px;background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow)}
+.chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:26px 28px 0}
+.chart-head p{color:var(--muted);font-size:.88rem;max-width:620px;margin:8px 0 0}
+.controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}
+.control-group{display:flex;background:var(--bg2);padding:4px;border:1px solid var(--line)}
+button{font:500 .76rem/1 "IBM Plex Sans",sans-serif;color:var(--muted);background:transparent;border:0;padding:10px 12px;cursor:pointer}
+button.active{color:var(--bg);background:var(--cyan)}
+button:focus-visible,.method-toggle:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.chart-wrap{position:relative;padding:6px 12px 18px;min-height:500px}
+#heroChart{display:block;width:100%;height:auto;min-height:440px}
+.axis-label{fill:var(--muted);font-size:12px;font-family:"IBM Plex Sans",sans-serif}
+.gridline{stroke:var(--line);stroke-width:1}.line-a{fill:none;stroke:var(--amber);stroke-width:3}.line-b{fill:none;stroke:var(--cyan);stroke-width:2}.mask-dot{fill:var(--red);stroke:var(--paper);stroke-width:2}.event-dot{fill:var(--text);stroke:var(--amber);stroke-width:3;cursor:pointer}.event-stem{stroke:var(--amber);stroke-width:1;stroke-dasharray:4 5;opacity:.68}
+.phase-label{fill:var(--muted);font:600 10px "IBM Plex Sans",sans-serif;letter-spacing:.08em}.chart-legend{display:flex;gap:22px;flex-wrap:wrap;padding:0 28px 26px;color:var(--muted);font-size:.78rem}.legend-item{display:flex;align-items:center;gap:8px}.swatch{width:22px;height:3px;background:var(--amber)}.swatch.cyan{background:var(--cyan)}.swatch.mask{width:9px;height:9px;border-radius:50%;background:var(--red)}
+.tooltip{position:fixed;z-index:30;width:min(300px,calc(100vw - 28px));pointer-events:none;background:#020708;color:#f4f7f6;border:1px solid #38505a;padding:14px 16px;box-shadow:0 12px 40px rgba(0,0,0,.45);opacity:0;transform:translateY(6px);transition:opacity .14s,transform .14s;font-size:.79rem;line-height:1.45}.tooltip.show{opacity:1;transform:none}.tooltip strong{display:block;color:#ffd186;font-size:.9rem;margin-bottom:4px}
+.phase-key{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0 0}.phase{padding:16px 18px;background:var(--paper);border-top:3px solid var(--cyan)}.phase:nth-child(1){border-color:#d88938}.phase:nth-child(3){border-color:var(--cyan)}.phase:nth-child(4){border-color:var(--amber)}.phase b{display:block;font-size:.82rem}.phase span{color:var(--muted);font-size:.76rem}
+.explainer{display:grid;grid-template-columns:.8fr 1.2fr;gap:54px;align-items:center;margin-top:54px}.explainer-copy p{color:var(--muted)}
+.mask-panel{background:var(--paper);border:1px solid var(--line);padding:28px}.month-switch{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px}.month-switch button{border:1px solid var(--line)}.month-switch button.active{border-color:var(--cyan)}
+.bar-row{display:grid;grid-template-columns:130px 1fr 74px;align-items:center;gap:12px;margin:20px 0;font-size:.8rem}.bar-track{height:18px;background:var(--bg2);position:relative}.bar-fill{height:100%;width:0;transition:width .6s cubic-bezier(.2,.7,.2,1);background:var(--cyan)}.bar-fill.raw{background:var(--red)}.bar-fill.restored{background:var(--amber)}.bar-value{text-align:right;font-variant-numeric:tabular-nums}.mask-note{padding-top:20px;border-top:1px solid var(--line);margin-top:24px;color:var(--muted);font-size:.78rem}.mask-note strong{color:var(--text)}
+.timeline{margin-top:54px;border-top:1px solid var(--line)}.event-row{display:grid;grid-template-columns:116px 1fr 135px;gap:26px;padding:24px 0;border-bottom:1px solid var(--line);align-items:start}.event-date{color:var(--amber);font:600 1.04rem "Newsreader",serif}.event-title{font-weight:500}.event-desc{color:var(--muted);font-size:.82rem;margin-top:6px;line-height:1.5}.event-value{text-align:right;font:600 1.05rem "Newsreader",serif}.tag{display:inline-block;margin-top:8px;color:var(--cyan2);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase}
+.method-steps{counter-reset:method;display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:46px}.step{counter-increment:method;background:var(--paper);padding:26px 20px;min-height:210px}.step:before{content:"0" counter(method);display:block;color:var(--amber);font:600 1.8rem "Newsreader",serif;margin-bottom:34px}.step b{display:block;font-size:.86rem;margin-bottom:8px}.step span{display:block;color:var(--muted);font-size:.76rem;line-height:1.5}
+.method-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;background:none;color:var(--text);border:1px solid var(--line);padding:20px 22px;font-size:.86rem;margin-top:34px;text-align:left}.method-toggle span:last-child{color:var(--amber);font-size:1.1rem}.appendix{display:none;border:1px solid var(--line);border-top:0;padding:26px;background:var(--paper);font-size:.84rem;color:var(--muted)}.appendix.open{display:block}.appendix code{font-family:ui-monospace,monospace;color:var(--cyan2)}
+.implications{display:grid;grid-template-columns:1fr 1fr;gap:54px;margin-top:48px}.implication{padding-top:24px;border-top:2px solid var(--amber)}.implication p{color:var(--muted);font-size:.9rem}.household{font:600 clamp(3rem,7vw,6rem)/1 "Newsreader",serif;color:var(--cyan);letter-spacing:-.05em;margin:16px 0}.formula{font-size:.74rem;color:var(--muted)}
+.notes{padding:54px 0 70px;background:var(--bg2);font-size:.76rem;color:var(--muted)}.notes h3{color:var(--text);font-size:1.2rem}.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px}.notes p{margin-bottom:10px}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.method-steps{grid-template-columns:1fr 1fr}.step:last-child{grid-column:1/-1}.phase-key{grid-template-columns:1fr 1fr}.explainer{grid-template-columns:1fr}.chart-head{display:block}.controls{justify-content:flex-start;margin-top:20px}}
+@media(max-width:640px){.wrap,.reader{width:min(100% - 28px,760px)}.hero{min-height:86vh;padding-bottom:45px}.hero:after{right:14px;top:26px}h1{font-size:3.45rem}.section{padding:72px 0}.stats{grid-template-columns:1fr}.stat{min-height:150px}.chart-shell{margin-left:-8px;margin-right:-8px}.chart-head{padding:20px 18px 0}.chart-wrap{padding:0 2px 12px;min-height:380px}#heroChart{min-height:370px}.chart-legend{padding:0 18px 20px;gap:12px}.phase-key{grid-template-columns:1fr}.event-row{grid-template-columns:90px 1fr;gap:16px}.event-value{grid-column:2;text-align:left;margin-top:-10px}.method-steps{grid-template-columns:1fr}.step:last-child{grid-column:auto}.step{min-height:0}.bar-row{grid-template-columns:96px 1fr 60px;gap:8px}.mask-panel{padding:20px 16px}.implications,.notes-grid{grid-template-columns:1fr;gap:28px}.callout{padding:22px 20px;margin:34px 0}.control-group{width:100%}.control-group button{flex:1}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar-fill,.tooltip{transition:none}}
+</style>
+</head>
+<body><div style="position:fixed;top:0;left:0;right:0;z-index:9999;height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:rgba(10,10,12,.94);border-bottom:1px solid #26262b;font-family:Inter,system-ui,sans-serif;font-size:13px"><a href="index.html" style="color:#fff;text-decoration:none;font-weight:700;letter-spacing:.08em">KS</a><nav style="display:flex;gap:20px"><a href="index.html" style="color:#c9c9ce;text-decoration:none">Home</a><a href="writing.html" style="color:#fff;text-decoration:none">Writing</a><a href="photos.html" style="color:#c9c9ce;text-decoration:none">Photography</a></nav></div><style>body{padding-top:46px !important}</style>
+<main>
+<section class="hero"><div class="wrap">
+  <p class="kicker">An energy forensic</p>
+  <h1>The Hidden <em>Megawatts</em></h1>
+  <p class="deck">A forensic reading of aggregate ZIP-level electricity use—a data-center proxy, not a facility meter—and what its anomalies may reveal about the AI boom.</p>
+  <div class="byline">BDI 513 Group 10 · Yun-Chuan Ho · Hamza Khan · Yu-Lan Liu · Prayag Patil · Kevin Sigey · Majesty Umoye · University of Illinois Urbana-Champaign</div>
+</div></section>
+
+<section class="section"><div class="reader">
+  <p class="eyebrow">The reporting blind spot</p>
+  <h2>A quiet ZIP code with an impossible pulse.</h2>
+  <p class="lede">Most months, downtown San Jose ZIP 95113—the project’s data-center proxy—traces a familiar commercial rhythm. Then its aggregate series collapses below one million kilowatt-hours or vaults beyond 200 million.</p>
+  <p>That volatility could reflect physical demand, changing customer composition, or reporting treatment. Under CPUC Decision 14-05-016, PG&amp;E aggregates usage before publishing it: at least 100 residential or 15 non-residential customers per ZIP, with no single customer contributing more than 15% of the total. When thresholds are not met, published geography may be suppressed or combined.</p>
+  <div class="callout">The project tests a <b>load-masking hypothesis</b>: an abrupt ZIP-level collapse paired with an offsetting neighbor surge may indicate that aggregated load moved across a reporting boundary. The public rows cannot identify a facility, customer, meter, or workload.</div>
+  <p>The project’s broader neighborhood analysis reported 23 reallocations. The two-ZIP extract used in this paper is narrower: its live trailing-median screen flags the six sharp 95113 collapses visible here. That distinction matters—the chart demonstrates the signal, while the 23-count belongs to the full project pipeline.</p>
+</div><div class="wrap stats" aria-label="Key findings">
+  <div class="stat"><div class="stat-value" data-count="201.4" data-suffix="M">201.4M</div><div class="stat-label"><b>Absolute monthly peak</b><br>February 2023</div></div>
+  <div class="stat"><div class="stat-value" data-count="28.1" data-suffix="M">28.1M</div><div class="stat-label"><b>Project-adjusted monthly average</b><br>after the full 23 reallocations</div></div>
+  <div class="stat"><div class="stat-value" data-count="155.3" data-suffix="M">155.3M</div><div class="stat-label"><b>Construction peak</b><br>February 2017</div></div>
+  <div class="stat"><div class="stat-value" data-count="6" data-suffix="">6</div><div class="stat-label"><b>Low-load flags in this extract</b><br>computed from trailing medians</div></div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <p class="eyebrow">The load curve</p>
+  <h2>One chart, four operating regimes.</h2>
+  <p class="lede" style="max-width:780px">Switch to logarithmic scale to inspect ordinary months without letting the 200-million-kWh spikes flatten the story. Turn on masking flags to reveal where the published series nearly vanishes.</p>
+  <div class="chart-shell">
+    <div class="chart-head"><div><h3>Monthly electricity usage</h3><p>ZIP 95113 versus comparison ZIP 95045 · July 2016–September 2025 · event labels are contextual associations, not proof of causation.</p></div>
+      <div class="controls" aria-label="Chart controls">
+        <div class="control-group" aria-label="Scale"><button class="active" data-scale="linear">Linear</button><button data-scale="log">Log</button></div>
+        <div class="control-group" aria-label="Masking flags"><button class="active" data-mask="off">Flags off</button><button data-mask="on">Flags on</button></div>
+      </div>
+    </div>
+    <div class="chart-wrap"><svg id="heroChart" viewBox="0 0 1100 560" role="img" aria-labelledby="chartTitle chartDesc"><title id="chartTitle">Monthly electricity usage in two San Jose ZIP codes</title><desc id="chartDesc">A time-series comparison from July 2016 through September 2025 with lifecycle shading and AI-related event markers.</desc></svg></div>
+    <div class="chart-legend"><span class="legend-item"><i class="swatch"></i>95113 · focal ZIP</span><span class="legend-item"><i class="swatch cyan"></i>95045 · comparison</span><span class="legend-item"><i class="swatch mask"></i>trailing-median flag</span><span class="legend-item">Unit: monthly kWh</span></div>
+  </div>
+  <div class="phase-key" aria-label="Lifecycle phases"><div class="phase"><b>2016–17 · Build-out</b><span>Construction and commissioning</span></div><div class="phase"><b>2018–20 · Steady operations</b><span>Typically 10–14M kWh</span></div><div class="phase"><b>2021–24 · AI expansion</b><span>Higher baseline, severe event peaks</span></div><div class="phase"><b>2025 · Consolidation</b><span>120.7M January spike, then elevated plateau</span></div></div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <div class="reader" style="margin-left:0"><p class="eyebrow">Interactive method</p><h2>How a missing load leaves a fingerprint.</h2></div>
+  <div class="explainer"><div class="explainer-copy"><p class="lede">A near-total one-month collapse in an otherwise continuous aggregate series is a clue—not a verdict. The detector isolates those discontinuities for further neighbor checks.</p><p>Select a flagged month to compare the raw 95113 value with its trailing 12-month median and the comparison ZIP. The amber bar is a conservative baseline reference—not a claim that electricity is missing or that every kilowatt-hour has been located.</p></div>
+    <div class="mask-panel"><div class="month-switch" id="monthSwitch" aria-label="Select a flagged month"></div><div id="maskBars"></div><p class="mask-note" id="maskNote"></p></div>
+  </div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <p class="eyebrow">Context timeline</p><h2>Utility peaks beside milestones in the AI cycle.</h2>
+  <p class="lede" style="max-width:800px">The alignment is suggestive, not causal identification. Seven rows originate in the project’s event file; this paper corrects the 2023 GPT-4 date labels and adds three contextual adoption markers from the project brief.</p>
+  <div class="timeline" id="timeline"></div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  <div class="reader" style="margin-left:0"><p class="eyebrow">Methodology</p><h2>From public utility rows to a forensic series.</h2><p class="lede">The analysis combines PG&amp;E public ZIP-code usage across commercial, residential, and industrial classes with a rule-based masking detector, then compares month-over-month and year-over-year movement.</p></div>
+  <div class="method-steps"><div class="step"><b>Establish the ZIP baseline</b><span>Compute a robust median for each geography rather than letting peaks set the norm.</span></div><div class="step"><b>Find focal collapses</b><span>Flag months where 95113 falls below 50% of its trailing 12-month median.</span></div><div class="step"><b>Search adjacent ZIPs</b><span>Check neighbors for contemporaneous usage above 150% of their own baseline.</span></div><div class="step"><b>Reallocate cautiously</b><span>Pair low/high anomalies only where timing and magnitude support a likely reporting shift.</span></div><div class="step"><b>Validate the pattern</b><span>Recompute month-over-month, year-over-year, phase averages, and extreme months.</span></div></div>
+  <button class="method-toggle" id="methodToggle" aria-expanded="false" aria-controls="appendix"><span>Open methodology appendix</span><span>＋</span></button>
+  <div class="appendix" id="appendix"><p><b>Detector shown in this page.</b> For month <code>t</code>, the focal ZIP is flagged when <code>Usage95113(t) &lt; 0.5 × median(Usage95113(t−12 … t−1))</code>. A minimum of six prior observations is required. The browser computes this from the embedded CSV rows; it does not fetch data.</p><p><b>Full-project reallocation.</b> The broader source analysis also searched neighboring ZIPs for an offsetting increase above 150% of their baseline and reported 23 reallocations. The supplied two-ZIP extract cannot reproduce the neighbor search, so this paper does not pretend that it can.</p><p><b>Transformations.</b> Month-over-month change compares adjacent observations. Year-over-year change compares the same calendar month 12 observations apart. No interpolation is used; the source period ends in September 2025.</p><p><b>Limitations.</b> ZIP aggregation prevents facility-level attribution. Event timing creates hypotheses, not causal proof. Meter reclassification, reporting boundaries, weather, occupancy, and other large customers can also move the series.</p></div>
+</div></section>
+
+<section class="section"><div class="wrap"><p class="eyebrow">What it means</p><h2>Grid planners see the average.<br>Aggregate peaks arrive as shocks.</h2>
+  <div class="implications"><div class="implication"><h3>Apparent demand can be a floor</h3><p>The project interprets masked periods as evidence that AI-related loads may be two to three times what a single raw ZIP series suggests. This is a scenario range from the project—not a facility-level causal estimate.</p><p>For planning, the key risk is volatility: a network designed around a calm monthly average can still face sharp, concentrated ramps. Facility-level evidence would be needed to determine whether any given ramp came from model training, inference, or another large load.</p></div><div class="implication"><h3>Put the peak in human units</h3><div class="household" id="homeMonths">224K</div><p>household-months of electricity in February 2023, using a transparent 900 kWh/month benchmark. That easily exceeds 15,000 homes—and shows how conservative that shorthand is.</p><div class="formula">201.4M kWh ÷ 900 kWh per household-month ≈ 223,806</div></div></div>
+</div></section>
+
+<footer class="notes"><div class="wrap notes-grid"><div><h3>Data note</h3><p>Source period: July 2016–September 2025. PG&amp;E data are published quarterly under CPUC Decision 14-05-016. Recipients are responsible for their use of the data; accuracy is not warranted.</p></div><div><h3>Reading the claims</h3><p>Usage values are drawn from the supplied project CSV. Event descriptions are analytical context. “Project-adjusted” figures refer to the broader 23-reallocation workflow; raw-chart summaries are recomputed from the two-ZIP extract.</p></div></div></footer>
+</main>
+<div class="tooltip" id="tooltip" role="status" aria-live="polite"></div>
+<script>
+(function(){
+'use strict';
+var rows=[["2016-07",95045,10907081.5],["2016-07",95113,11817175],["2016-08",95045,10658228],["2016-08",95113,11788513],["2016-09",95045,9871538.75],["2016-09",95113,11355007],["2016-10",95045,9119348],["2016-10",95113,10805864],["2016-11",95045,9094549.25],["2016-11",95113,10049109],["2016-12",95045,10527888.75],["2016-12",95113,9928147],["2017-01",95045,8956485.5],["2017-01",95113,590510],["2017-02",95045,7472768],["2017-02",95113,155301218],["2017-03",95045,8889207.75],["2017-03",95113,10577037],["2017-04",95045,8263264.25],["2017-04",95113,10171386],["2017-05",95045,9144554.5],["2017-05",95113,11373488],["2017-06",95045,10017420.25],["2017-06",95113,11512840],["2017-07",95045,11427229],["2017-07",95113,12255059],["2017-08",95045,11324061],["2017-08",95113,12402451],["2017-09",95045,20837033.75],["2017-09",95113,24516283],["2017-10",95045,7406582],["2017-10",95113,507884],["2017-11",95045,8827546.75],["2017-11",95113,10309323],["2017-12",95045,10108130.75],["2017-12",95113,10242693],["2018-01",95045,9790324.5],["2018-01",95113,10550209],["2018-02",95045,8440150.25],["2018-02",95113,9638381],["2018-03",95045,8629515.75],["2018-03",95113,10471066],["2018-04",95045,8136475.5],["2018-04",95113,9766965],["2018-05",95045,8543737.5],["2018-05",95113,10445843],["2018-06",95045,9349695.5],["2018-06",95113,10391597],["2018-07",95045,11095702.75],["2018-07",95113,11853280],["2018-08",95045,10444761.25],["2018-08",95113,11627691],["2018-09",95045,9046525],["2018-09",95113,9488035],["2018-10",95045,8839869.75],["2018-10",95113,10745654],["2018-11",95045,8945973.25],["2018-11",95113,9561240],["2018-12",95045,9851125.5],["2018-12",95113,9110385],["2019-01",95045,9719309],["2019-01",95113,9405905],["2019-02",95045,8964375],["2019-02",95113,8476031],["2019-03",95045,8673000.5],["2019-03",95113,8988378],["2019-04",95045,8053423.25],["2019-04",95113,9544796],["2019-05",95045,8275767.75],["2019-05",95113,9560456],["2019-06",95045,9592788.75],["2019-06",95113,10176224],["2019-07",95045,10489302.5],["2019-07",95113,11471150],["2019-08",95045,11173189.75],["2019-08",95113,12264668],["2019-09",95045,9546333.25],["2019-09",95113,10904639],["2019-10",95045,8390218.5],["2019-10",95113,10028838],["2019-11",95045,8720308.75],["2019-11",95113,8798113],["2019-12",95045,9850759],["2019-12",95113,8495408],["2020-01",95045,9606139.25],["2020-01",95113,8886959],["2020-02",95045,8102036.25],["2020-02",95113,8457329],["2020-03",95045,8479087.25],["2020-03",95113,8179135],["2020-04",95045,8136240.25],["2020-04",95113,7693118],["2020-05",95045,8240334.25],["2020-05",95113,682701],["2020-06",95045,9788440.25],["2020-06",95113,9053593],["2020-07",95045,10667614],["2020-07",95113,10769997],["2020-08",95045,11918263],["2020-08",95113,11896005],["2020-09",95045,10407725.75],["2020-09",95113,10838338],["2020-10",95045,9838218],["2020-10",95113,10962102],["2020-11",95045,9326664],["2020-11",95113,9031273],["2020-12",95045,10410744],["2020-12",95113,9078554],["2021-01",95045,10235037.25],["2021-01",95113,6484074],["2021-02",95045,8658527.25],["2021-02",95113,582360],["2021-03",95045,9116340.5],["2021-03",95113,5861806],["2021-04",95045,8922252.75],["2021-04",95113,581495],["2021-05",95045,9674125.5],["2021-05",95113,642725],["2021-06",95045,9472165.5],["2021-06",95113,7348148],["2021-07",95045,11847855.75],["2021-07",95113,18270393],["2021-08",95045,11216009],["2021-08",95113,17743679],["2021-09",95045,10572675.5],["2021-09",95113,7236563],["2021-10",95045,10293030.5],["2021-10",95113,17210111],["2021-11",95045,9729391.75],["2021-11",95113,15946431],["2021-12",95045,10788923],["2021-12",95113,15568541],["2022-01",95045,9887125],["2022-01",95113,15660450],["2022-02",95045,9791821.25],["2022-02",95113,14373658],["2022-03",95045,10107941.5],["2022-03",95113,14615397],["2022-04",95045,9607886],["2022-04",95113,15696846],["2022-05",95045,10405289.5],["2022-05",95113,16457259],["2022-06",95045,10454186.75],["2022-06",95113,15890928],["2022-07",95045,12206056.75],["2022-07",95113,17540461],["2022-08",95045,12870613.25],["2022-08",95113,18336863],["2022-09",95045,10814340.5],["2022-09",95113,17799054],["2022-10",95045,10548501],["2022-10",95113,16737841],["2022-11",95045,10397226],["2022-11",95113,14968217],["2022-12",95045,10646554],["2022-12",95113,15066915],["2023-01",95045,11090307.5],["2023-01",95113,62698516],["2023-02",95045,9248504.5],["2023-02",95113,201425151],["2023-03",95045,9622855.75],["2023-03",95113,14497130],["2023-04",95045,9463645],["2023-04",95113,177479890],["2023-05",95045,10013526.5],["2023-05",95113,14936189],["2023-06",95045,8952469.75],["2023-06",95113,14504253],["2023-07",95045,12209704],["2023-07",95113,16615637],["2023-08",95045,7972585],["2023-08",95113,17595235],["2023-09",95045,29915908.25],["2023-09",95113,15380799],["2023-10",95045,6567084],["2023-10",95113,93000971],["2023-11",95045,6530202.75],["2023-11",95113,82143181],["2023-12",95045,7527870.25],["2023-12",95113,13630179],["2024-01",95045,10587429.5],["2024-01",95113,13843046],["2024-02",95045,9681147],["2024-02",95113,13004287],["2024-03",95045,9387347],["2024-03",95113,13842004],["2024-04",95045,8890259.5],["2024-04",95113,13554651],["2024-05",95045,9252710.75],["2024-05",95113,14314106],["2024-06",95045,9684446.25],["2024-06",95113,14329661],["2024-07",95045,11734858.75],["2024-07",95113,17080759],["2024-08",95045,11199873.25],["2024-08",95113,16179107],["2024-09",95045,9650391.25],["2024-09",95113,87638185],["2024-10",95045,11522562],["2024-10",95113,83876304],["2024-11",95045,9863940.5],["2024-11",95113,112349180],["2024-12",95045,10721343.5],["2024-12",95113,15737107],["2025-01",95045,10665548.75],["2025-01",95113,120700504],["2025-02",95045,9138128.75],["2025-02",95113,97171869],["2025-03",95045,9581360.5],["2025-03",95113,108515878],["2025-04",95045,8035927.5],["2025-04",95113,102776824],["2025-05",95045,8353537],["2025-05",95113,78891824],["2025-06",95045,8676667.75],["2025-06",95113,78360235],["2025-07",95045,9330446],["2025-07",95113,80608973],["2025-08",95045,10155772.75],["2025-08",95113,81042500],["2025-09",95045,9911736.5],["2025-09",95113,79054464]];
+var events=[
+ {date:'2017-02',category:'Infrastructure',title:'Data Center Construction Peak',desc:'Initial infrastructure build-out: major hardware installation and facility expansion.',file:true},
+ {date:'2021-08',category:'Adoption context',title:'GPT-3 adoption',desc:'A project-context marker during the shift to a higher operating baseline.',file:false},
+ {date:'2022-07',category:'Generative media context',title:'DALL·E 2 adoption',desc:'Usage climbs during the diffusion of image-generation workloads.',file:false},
+ {date:'2022-08',category:'Generative media context',title:'Stable Diffusion release',desc:'Another contextual marker in a sustained high-usage summer.',file:false},
+ {date:'2023-02',category:'Launch context',title:'Bing AI integration context',desc:'Absolute usage peak in the month Microsoft introduced the new Bing; this is temporal context, not evidence of its electricity demand.',file:true},
+ {date:'2023-04',category:'Post-launch observation',title:'Month after GPT-4 public launch',desc:'A sharp usage observation following GPT-4’s March 14 public launch; the ZIP aggregate cannot attribute the load to that product.',file:true},
+ {date:'2023-10',category:'Sustained Operations',title:'GPT-4 Widespread Adoption',desc:'High usage associated with enterprise adoption, API integrations, and user growth.',file:true},
+ {date:'2024-09',category:'Multi-Modal AI',title:'Vision + Audio AI Integration',desc:'The project associates the spike with multi-modal processing workloads.',file:true},
+ {date:'2024-11',category:'User Growth',title:'ChatGPT Plus Subscription Boom',desc:'A user-growth interpretation for a renewed inference-demand peak.',file:true},
+ {date:'2025-01',category:'New Model Training',title:'Massive January Spike (Likely New Model)',desc:'Pattern consistent with a major training run or infrastructure upgrade; attribution is suspected, not verified.',file:true}
+];
+var byDate={},dates=[];rows.forEach(function(r){if(!byDate[r[0]]){byDate[r[0]]={date:r[0]};dates.push(r[0]);}byDate[r[0]][r[1]]=r[2];});
+var data=dates.map(function(d){return byDate[d];});
+function median(a){var b=a.slice().sort(function(x,y){return x-y}),m=Math.floor(b.length/2);return b.length%2?b[m]:(b[m-1]+b[m])/2;}
+var flags=[];data.forEach(function(d,i){var prev=data.slice(Math.max(0,i-12),i).map(function(x){return x[95113];});if(prev.length>=6){var med=median(prev);if(d[95113]<.5*med)flags.push({date:d.date,raw:d[95113],baseline:med,comparison:d[95045]});}});
+function fmt(v){if(v>=1000000)return (v/1000000).toFixed(v>=100000000?0:1)+'M';if(v>=1000)return (v/1000).toFixed(0)+'K';return String(Math.round(v));}
+function esc(s){return s.replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+var svg=document.getElementById('heroChart'),scaleMode='linear',showFlags=false,NS='http://www.w3.org/2000/svg',tip=document.getElementById('tooltip');
+function el(tag,attrs,parent){var n=document.createElementNS(NS,tag);Object.keys(attrs||{}).forEach(function(k){n.setAttribute(k,attrs[k]);});(parent||svg).appendChild(n);return n;}
+function drawChart(){svg.innerHTML='';var W=1100,H=560,L=82,R=28,T=42,B=62,pw=W-L-R,ph=H-T-B;var vals=[];data.forEach(function(d){vals.push(d[95113],d[95045]);});var max=Math.max.apply(null,vals)*1.04,min=Math.min.apply(null,vals)*.8;
+ function x(i){return L+i/(data.length-1)*pw;} function y(v){if(scaleMode==='log'){var a=Math.log10(min),b=Math.log10(max);return T+(b-Math.log10(v))/(b-a)*ph;}return T+(max-v)/max*ph;}
+ var phases=[['2016-07','2017-12','BUILD-OUT','var(--phase1)'],['2018-01','2020-12','STEADY OPS','var(--phase2)'],['2021-01','2024-12','AI EXPANSION','var(--phase3)'],['2025-01','2025-09','CONSOLIDATION','var(--phase4)']];
+ phases.forEach(function(p){var i0=dates.indexOf(p[0]),i1=dates.indexOf(p[1]);var xx=x(i0),ww=x(i1)-xx+(pw/(data.length-1));el('rect',{x:xx,y:T,width:ww,height:ph,fill:p[3]},svg);var tx=el('text',{x:xx+8,y:T+15,class:'phase-label'},svg);tx.textContent=p[2];});
+ var ticks=scaleMode==='linear'?[0,50000000,100000000,150000000,200000000]:[500000,1000000,5000000,10000000,50000000,100000000,200000000];
+ ticks.filter(function(v){return v>= (scaleMode==='log'?min:0)&&v<=max;}).forEach(function(v){var yy=y(v);el('line',{x1:L,y1:yy,x2:W-R,y2:yy,class:'gridline'},svg);var t=el('text',{x:L-12,y:yy+4,'text-anchor':'end',class:'axis-label'},svg);t.textContent=v===0?'0':fmt(v);});
+ data.forEach(function(d,i){if(d.date.slice(5)==='01'){el('line',{x1:x(i),y1:H-B,x2:x(i),y2:H-B+6,stroke:'var(--line)'},svg);var t=el('text',{x:x(i),y:H-B+23,'text-anchor':'middle',class:'axis-label'},svg);t.textContent=d.date.slice(0,4);}});
+ function pathFor(key){return data.map(function(d,i){return(i?'L':'M')+x(i).toFixed(2)+','+y(d[key]).toFixed(2);}).join(' ');}el('path',{d:pathFor(95113),class:'line-a'},svg);el('path',{d:pathFor(95045),class:'line-b'},svg);
+ events.filter(function(e){return e.file;}).forEach(function(e){var i=dates.indexOf(e.date);if(i<0)return;var yy=y(data[i][95113]);el('line',{x1:x(i),y1:yy,x2:x(i),y2:H-B,class:'event-stem'},svg);var c=el('circle',{cx:x(i),cy:yy,r:6,class:'event-dot',tabindex:'0','aria-label':e.date+' '+e.title},svg);function show(ev){tip.innerHTML='<strong>'+esc(e.title)+'</strong>'+esc(e.date)+' · '+fmt(data[i][95113])+' kWh<br>'+esc(e.desc);var px=(ev.clientX||window.innerWidth/2)+14,py=(ev.clientY||window.innerHeight/2)+14;if(px+300>window.innerWidth)px=window.innerWidth-314;if(py+150>window.innerHeight)py=window.innerHeight-164;tip.style.left=Math.max(8,px)+'px';tip.style.top=Math.max(8,py)+'px';tip.classList.add('show');}c.addEventListener('pointerenter',show);c.addEventListener('pointermove',show);c.addEventListener('pointerleave',function(){tip.classList.remove('show');});c.addEventListener('focus',show);c.addEventListener('blur',function(){tip.classList.remove('show');});});
+ if(showFlags)flags.forEach(function(f){var i=dates.indexOf(f.date);var c=el('circle',{cx:x(i),cy:y(f.raw),r:6,class:'mask-dot',tabindex:'0','aria-label':f.date+' masking flag'},svg);c.addEventListener('pointerenter',function(ev){tip.innerHTML='<strong>Load-masking flag · '+f.date+'</strong>Raw '+fmt(f.raw)+' versus '+fmt(f.baseline)+' trailing median';tip.style.left=Math.min(ev.clientX+12,window.innerWidth-314)+'px';tip.style.top=Math.min(ev.clientY+12,window.innerHeight-120)+'px';tip.classList.add('show');});c.addEventListener('pointerleave',function(){tip.classList.remove('show');});});
+ var note=el('text',{x:L,y:20,class:'axis-label'},svg);note.textContent=scaleMode==='log'?'LOG SCALE · axis begins at '+fmt(min):'LINEAR SCALE · zero baseline';}
+ document.querySelectorAll('[data-scale]').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('[data-scale]').forEach(function(x){x.classList.remove('active');});b.classList.add('active');scaleMode=b.getAttribute('data-scale');drawChart();});});
+ document.querySelectorAll('[data-mask]').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('[data-mask]').forEach(function(x){x.classList.remove('active');});b.classList.add('active');showFlags=b.getAttribute('data-mask')==='on';drawChart();});});drawChart();
+ var monthSwitch=document.getElementById('monthSwitch'),bars=document.getElementById('maskBars'),maskNote=document.getElementById('maskNote');
+ flags.forEach(function(f,i){var b=document.createElement('button');b.textContent=f.date;b.className=i===3?'active':'';b.addEventListener('click',function(){Array.prototype.forEach.call(monthSwitch.children,function(x){x.classList.remove('active');});b.classList.add('active');renderMask(f);});monthSwitch.appendChild(b);});
+ function renderMask(f){var max=Math.max(f.raw,f.baseline,f.comparison);var list=[['95113 · published',f.raw,'raw'],['95113 · trailing median',f.baseline,'restored'],['95045 · comparison',f.comparison,'']];bars.innerHTML=list.map(function(r){return '<div class="bar-row"><span>'+r[0]+'</span><div class="bar-track"><div class="bar-fill '+r[2]+'" data-width="'+(r[1]/max*100).toFixed(1)+'"></div></div><span class="bar-value">'+fmt(r[1])+'</span></div>';}).join('');requestAnimationFrame(function(){Array.prototype.forEach.call(bars.querySelectorAll('.bar-fill'),function(x){x.style.width=x.getAttribute('data-width')+'%';});});maskNote.innerHTML='<strong>'+f.date+':</strong> 95113 published at '+fmt(f.raw)+', only '+Math.round(f.raw/f.baseline*100)+'% of its trailing median. The implied gap to baseline is '+fmt(f.baseline-f.raw)+'. The comparison ZIP stayed near '+fmt(f.comparison)+'; locating an absorbing neighbor requires the broader dataset.';}
+ renderMask(flags[3]||flags[0]);
+ var tl=document.getElementById('timeline');events.forEach(function(e){var d=byDate[e.date],v=d?d[95113]:0,row=document.createElement('div');row.className='event-row';row.innerHTML='<div class="event-date">'+e.date+'</div><div><div class="event-title">'+esc(e.title)+'</div><div class="event-desc">'+esc(e.desc)+'</div><span class="tag">'+esc(e.category)+(e.file?' · project event, label reviewed':' · project context')+'</span></div><div class="event-value">'+fmt(v)+' kWh</div>';tl.appendChild(row);});
+ var toggle=document.getElementById('methodToggle'),app=document.getElementById('appendix');toggle.addEventListener('click',function(){var open=app.classList.toggle('open');toggle.setAttribute('aria-expanded',String(open));toggle.firstElementChild.textContent=open?'Close methodology appendix':'Open methodology appendix';toggle.lastElementChild.textContent=open?'−':'＋';});
+ var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;var stats=document.querySelectorAll('[data-count]');if('IntersectionObserver'in window&&!reduced){var io=new IntersectionObserver(function(entries){entries.forEach(function(en){if(!en.isIntersecting)return;var node=en.target,target=parseFloat(node.getAttribute('data-count')),suffix=node.getAttribute('data-suffix'),start=performance.now();function tick(now){var p=Math.min(1,(now-start)/800),ease=1-Math.pow(1-p,3);node.textContent=(target<10?Math.round(target*ease):(target*ease).toFixed(1))+suffix;if(p<1)requestAnimationFrame(tick);}requestAnimationFrame(tick);io.unobserve(node);});},{threshold:.4});stats.forEach(function(s){io.observe(s);});}
+})();
+</script>
+</body>
+</html>
